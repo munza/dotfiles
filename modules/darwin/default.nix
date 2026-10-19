@@ -21,33 +21,52 @@ in
     flake.darwinModules.system
   ];
 
-  # The users/ file already names the user, so hosts don't have to repeat it.
-  dotfiles.user.name = lib.mkIf (builtins.length hmUsers == 1) (
-    lib.mkDefault (builtins.head hmUsers)
-  );
+  options.dotfiles.home = lib.mkOption {
+    type = lib.types.deferredModule;
+    default = { };
+    example = lib.literalExpression ''
+      { pkgs, lib, ... }: {
+        programs.git.settings.pull.rebase = false;            # replaces the default
+        programs.git.ignores = [ "*.swp" ];                   # lists are added to
+        programs.zsh.setOptions = lib.mkForce [ "AUTO_PUSHD" ]; # replaces the whole list
+      }
+    '';
+    description = ''
+      Home-manager config for this host's user, merged with the defaults from
+      homeModules.default. Same as writing it in hosts/<host>/users/<name>.nix.
+    '';
+  };
 
-  system.primaryUser = user.name;
-  users.users = lib.genAttrs hmUsers (name: {
-    home = "/Users/${name}";
-  });
+  config = {
+    # The users/ file already names the user, so hosts don't have to repeat it.
+    dotfiles.user.name = lib.mkIf (builtins.length hmUsers == 1) (
+      lib.mkDefault (builtins.head hmUsers)
+    );
 
-  # A first switch moves existing files (e.g. ~/.zshrc) to the Trash instead of failing.
-  home-manager.backupCommand = "${pkgs.darwin.trash}/bin/trash";
+    system.primaryUser = user.name;
+    users.users = lib.genAttrs hmUsers (name: {
+      home = "/Users/${name}";
+    });
 
-  # Shared rather than set on home-manager.users.<name>, which would create an
-  # empty extra user when the name doesn't match the users/ file.
-  home-manager.sharedModules = [
-    flake.homeModules.default
-    { dotfiles.user = user; }
-  ];
+    # A first switch moves existing files (e.g. ~/.zshrc) to the Trash instead of failing.
+    home-manager.backupCommand = "${pkgs.darwin.trash}/bin/trash";
 
-  assertions = [
-    {
-      assertion = hmUsers == [ user.name ];
-      message = ''
-        dotfiles.user.name is "${user.name}", but the host's users are: ${toString hmUsers}.
-        Name the file hosts/<host>/users/${user.name}.nix, or drop dotfiles.user.name to use the file name.
-      '';
-    }
-  ];
+    # Shared rather than set on home-manager.users.<name>, which would create an
+    # empty extra user when the name doesn't match the users/ file.
+    home-manager.sharedModules = [
+      flake.homeModules.default
+      { dotfiles.user = user; }
+      config.dotfiles.home
+    ];
+
+    assertions = [
+      {
+        assertion = hmUsers == [ user.name ];
+        message = ''
+          dotfiles.user.name is "${user.name}", but the host's users are: ${toString hmUsers}.
+          Name the file hosts/<host>/users/${user.name}.nix, or drop dotfiles.user.name to use the file name.
+        '';
+      }
+    ];
+  };
 }
