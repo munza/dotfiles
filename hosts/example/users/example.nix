@@ -4,6 +4,7 @@
   # Opt-in apps; remove the ones you don't want.
   dotfiles.aerospace.enable = true;
   dotfiles.ghostty.enable = true;
+  dotfiles.lazygit.enable = true;
   dotfiles.yazi.enable = true;
   dotfiles.zed.enable = true;
 

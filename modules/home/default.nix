@@ -13,6 +13,7 @@
     flake.homeModules.gh
     flake.homeModules.ghostty
     flake.homeModules.git
+    flake.homeModules.lazygit
     flake.homeModules.nh
     flake.homeModules.nix-index
     flake.homeModules.starship
