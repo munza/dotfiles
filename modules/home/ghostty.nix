@@ -1,5 +1,5 @@
 # Ghostty terminal, using the font from dotfiles.fonts.mono. It also loads
-# config/ghostty/config from your repo, so you can edit settings in place;
+# <configDir>/ghostty/config from your repo, so you can edit settings in place;
 # values there win over the ones set here.
 { flake, ... }:
 flake.lib.mkModule {
@@ -18,7 +18,7 @@ flake.lib.mkModule {
         settings = {
           font-family = config.dotfiles.fonts.mono.name;
           # `?` makes the file optional.
-          config-file = [ "?${config.dotfiles.flakeDir}/config/ghostty/config" ];
+          config-file = [ "?${config.dotfiles.flakeDir}/${config.dotfiles.configDir}/ghostty/config" ];
         };
       };
     };

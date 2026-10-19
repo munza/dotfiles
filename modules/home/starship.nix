@@ -1,4 +1,4 @@
-# Starship prompt. Its config is config/starship.toml in your repo, linked
+# Starship prompt. Its config is <configDir>/starship.toml in your repo, linked
 # into ~/.config so you can edit it in place.
 { flake, ... }:
 flake.lib.mkModule {
