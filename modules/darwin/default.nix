@@ -1,13 +1,25 @@
 # Entry point for a darwin host: `imports = [ inputs.dotfiles.darwinModules.default ];`
 { flake, ... }:
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (config.dotfiles) user;
   # Blueprint creates one home-manager user per file in hosts/<host>/users/.
   hmUsers = builtins.attrNames config.home-manager.users;
 in
 {
-  imports = [ flake.modules.common.user ];
+  # Through flake.darwinModules so modules needing this flake's inputs get them,
+  # not the inputs of the flake importing this one.
+  imports = [
+    flake.modules.common.user
+    flake.darwinModules.homebrew
+    flake.darwinModules.nix
+    flake.darwinModules.system
+  ];
 
   # The users/ file already names the user, so hosts don't have to repeat it.
   dotfiles.user.name = lib.mkIf (builtins.length hmUsers == 1) (
@@ -18,6 +30,9 @@ in
   users.users = lib.genAttrs hmUsers (name: {
     home = "/Users/${name}";
   });
+
+  # A first switch moves existing files (e.g. ~/.zshrc) to the Trash instead of failing.
+  home-manager.backupCommand = "${pkgs.darwin.trash}/bin/trash";
 
   # Shared rather than set on home-manager.users.<name>, which would create an
   # empty extra user when the name doesn't match the users/ file.

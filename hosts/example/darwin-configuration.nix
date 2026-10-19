@@ -18,6 +18,10 @@
     email = "example@example.com";
   };
 
+  # Apps from Homebrew, and macOS preferences, go here too, e.g.:
+  #   homebrew.casks = [ "firefox" ];
+  #   system.defaults.dock.autohide = true;
+
   # Set once at install time; never bump on upgrade.
   system.stateVersion = 6;
 }
