@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      # Full history so the leak scan covers every commit, not just the tip.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: cachix/install-nix-action@v31
+
+      - name: Leak scan
+        run: nix run --inputs-from . nixpkgs#gitleaks -- git --redact --no-banner
+
+      # Builds this system's checks (formatting included) and evaluates the rest.
+      - name: Flake check
+        run: nix flake check --all-systems

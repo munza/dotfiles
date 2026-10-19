@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Blocks commits that contain credentials, before they reach any remote.
+set -euo pipefail
+
+# Falls back to the flake's pinned gitleaks outside the dev shell, so the scan never skips.
+if command -v gitleaks >/dev/null; then
+  gitleaks=(gitleaks)
+else
+  gitleaks=(nix run --inputs-from "$(git rev-parse --show-toplevel)" nixpkgs#gitleaks --)
+fi
+
+if ! "${gitleaks[@]}" git --staged --redact --no-banner; then
+  echo "pre-commit: possible secret staged. Unstage it, or mark a false positive with '# gitleaks:allow'." >&2
+  exit 1
+fi

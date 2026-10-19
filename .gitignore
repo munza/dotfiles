@@ -1,0 +1,19 @@
+# direnv
+.direnv/
+.envrc.local
+
+# nix
+result
+result-*
+
+# macOS
+.DS_Store
+
+# Key material and local env, never committed even by accident.
+*.key
+*.pem
+*.p12
+id_rsa*
+id_ed25519*
+.env
+.env.*
