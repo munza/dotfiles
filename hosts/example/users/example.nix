@@ -2,6 +2,7 @@
 # see ../darwin-configuration.nix for the steps.
 {
   # Opt-in apps; remove the ones you don't want.
+  dotfiles.aerospace.enable = true;
   dotfiles.ghostty.enable = true;
   dotfiles.zed.enable = true;
 

@@ -4,6 +4,7 @@
   # Through flake.homeModules so modules needing this flake's inputs get them.
   imports = [
     flake.modules.common.user
+    flake.homeModules.aerospace
     flake.homeModules.config-links
     flake.homeModules.direnv
     flake.homeModules.eza
