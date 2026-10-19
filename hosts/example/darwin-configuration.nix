@@ -1,11 +1,16 @@
-# Example host. Copy it to make your own:
+# Example host. Copy it to make your own (full guide in README.md):
 #
-#   1. cp -r hosts/example hosts/<mac-name>      # scutil --get LocalHostName
-#   2. mv hosts/<mac-name>/users/example.nix \
-#         hosts/<mac-name>/users/<login>.nix     # whoami
-#   3. Fill in your name and email below.
-#   4. sudo nix run nix-darwin -- switch --flake .#<mac-name>
-#   5. From then on: nh darwin switch --ask
+#   1. xcode-select --install                       # compiler for Homebrew and Neovim parsers
+#   2. sh <(curl -L https://nixos.org/nix/install)   # Nix
+#   3. git clone <your fork> ~/.dotfiles && cd ~/.dotfiles
+#   4. cp -r hosts/example hosts/<mac-name>         # scutil --get LocalHostName
+#      mv hosts/<mac-name>/users/example.nix \
+#         hosts/<mac-name>/users/<login>.nix        # whoami
+#   5. Fill in your name and email below.
+#   6. git add hosts/<mac-name>                     # flakes only see files git tracks
+#   7. sudo nix --extra-experimental-features 'nix-command flakes' \
+#        run --inputs-from . 'nix-darwin#darwin-rebuild' -- switch --flake '.#<mac-name>'
+#   8. From then on: nh darwin switch --ask
 #
 # Leave this folder as it is; CI checks it so the example always works.
 { flake, ... }:
