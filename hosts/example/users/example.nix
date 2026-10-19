@@ -4,6 +4,7 @@
   # Opt-in apps; remove the ones you don't want.
   dotfiles.aerospace.enable = true;
   dotfiles.ghostty.enable = true;
+  dotfiles.yazi.enable = true;
   dotfiles.zed.enable = true;
 
   # Set once at install time; never bump on upgrade.

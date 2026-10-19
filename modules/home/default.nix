@@ -16,6 +16,7 @@
     flake.homeModules.nh
     flake.homeModules.nix-index
     flake.homeModules.starship
+    flake.homeModules.yazi
     flake.homeModules.zed
     flake.homeModules.zoxide
     flake.homeModules.zsh
