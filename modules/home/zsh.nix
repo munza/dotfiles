@@ -32,6 +32,10 @@ flake.lib.mkModule {
           "PUSHD_IGNORE_DUPS"
           "PUSHD_SILENT"
           "EXTENDED_GLOB"
+          # `cd name` also tries $name, so named directories work without `~`.
+          "CDABLE_VARS"
+          # Offers to fix a mistyped command.
+          "CORRECT"
         ];
 
         initContent = flake.lib.mergeable ''
