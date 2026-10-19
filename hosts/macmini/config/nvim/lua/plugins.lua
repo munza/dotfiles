@@ -9,6 +9,7 @@ vim.pack.add({
   "https://github.com/b0o/SchemaStore.nvim", -- JSON/YAML schemas for jsonls and yamlls
   "https://github.com/stevearc/conform.nvim",
   "https://github.com/MeanderingProgrammer/render-markdown.nvim",
+  "https://github.com/rafamadriz/friendly-snippets", -- snippet collection for mini.snippets
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
   -- The Lua half of herdr-nvim; the herdr side is `herdr plugin install ChmaraX/herdr-nvim`.
   -- Keep this rev in step with `herdr plugin list` so both halves speak the same protocol.
@@ -43,6 +44,12 @@ for _, module in ipairs({
 }) do
   require("mini." .. module).setup()
 end
+
+-- Snippets from friendly-snippets, offered in the completion menu by a small
+-- built-in server. <C-j> expands, <C-l>/<C-h> jump between fields, <C-c> stops.
+local snippets = require("mini.snippets")
+snippets.setup({ snippets = { snippets.gen_loader.from_lang() } })
+snippets.start_lsp_server()
 
 -- Git signs in the gutter (otherwise it colors line numbers).
 require("mini.diff").setup({ view = { style = "sign" } })

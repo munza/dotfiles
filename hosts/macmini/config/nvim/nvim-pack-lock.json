@@ -12,6 +12,10 @@
       "rev": "016802de402556da54c36bd7359b441266b01cdd",
       "src": "https://github.com/stevearc/conform.nvim"
     },
+    "friendly-snippets": {
+      "rev": "b4d01b0fdf3c9a549961c2f9ffe8dc09be166219",
+      "src": "https://github.com/rafamadriz/friendly-snippets"
+    },
     "herdr-nvim": {
       "rev": "e2ec32e7bbbb1eefd64363414b5806f84eedd6bc",
       "src": "https://github.com/ChmaraX/herdr-nvim",
