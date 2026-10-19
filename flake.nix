@@ -13,6 +13,9 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Claude Code and pi for hosts/macmini; not following nixpkgs keeps its binary cache usable.
+    llm-agents.url = "github:numtide/llm-agents.nix";
+
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
