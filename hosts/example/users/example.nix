@@ -9,6 +9,7 @@
   dotfiles.ghostty.enable = true;
   dotfiles.herdr.enable = true;
   dotfiles.lazygit.enable = true;
+  dotfiles.neovim.enable = true;
   dotfiles.yazi.enable = true;
   dotfiles.zed.enable = true;
 

@@ -19,6 +19,7 @@
     flake.homeModules.herdr
     flake.homeModules.lazygit
     flake.homeModules.nh
+    flake.homeModules.neovim
     flake.homeModules.nix-index
     flake.homeModules.secrets-env
     flake.homeModules.secrets-sops
