@@ -21,6 +21,7 @@
     flake.homeModules.nh
     flake.homeModules.nix-index
     flake.homeModules.secrets-env
+    flake.homeModules.secrets-sops
     flake.homeModules.starship
     flake.homeModules.yazi
     flake.homeModules.zed
