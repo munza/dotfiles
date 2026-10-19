@@ -1,0 +1,2 @@
+# Ghostty settings you edit in place; loaded after the ones from Nix, so these win.
+# Reload with ⌘⇧, (Cmd+Shift+Comma). Options: https://ghostty.org/docs/config
