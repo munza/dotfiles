@@ -2,6 +2,8 @@
 
 My Nix configuration for **macOS** — nix-darwin and home-manager from a single flake, set up so anyone can fork it and make it their own.
 
+**[munza.github.io/dotfiles](https://munza.github.io/dotfiles)** — the short version, with every command ready to copy.
+
 Built with [blueprint](https://github.com/numtide/blueprint) for auto-discovery of hosts and modules, [nix-darwin](https://github.com/nix-darwin/nix-darwin) for the system, [home-manager](https://github.com/nix-community/home-manager) for user-level config, [nix-homebrew](https://github.com/zhaofengli/nix-homebrew) for GUI apps, and [nh](https://github.com/nix-community/nh) for rebuilds with a package diff.
 
 ## Structure

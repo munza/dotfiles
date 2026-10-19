@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dotfiles — a Mac you rebuild with one command</title>
+  <meta name="description" content="My nix-darwin and home-manager config for macOS, set up so you can fork it: copy the example host, add your name, run one command.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preload" href="fonts/familjen-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="top">
+    <a class="wordmark" href="#top" aria-label="dotfiles, back to top">dotfiles</a>
+    <nav aria-label="Sections">
+      <a href="#get">What you get</a>
+      <a href="#start">Quick start</a>
+      <a href="#yours">Make it yours</a>
+    </nav>
+    <div class="top-actions">
+      <button class="theme" type="button" aria-label="Switch between ink and paper themes">
+        <span data-theme-label="ink">ink</span><span aria-hidden="true">/</span><span data-theme-label="paper">paper</span>
+      </button>
+      <a class="github" href="https://github.com/munza/dotfiles" aria-label="munza/dotfiles on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <h1>My Mac, rebuilt with one command. Yours next.</h1>
+        <p class="lede">My nix-darwin and home-manager config, set up for forking — copy the example host, add your name, run one command. Before anything changes, it shows you exactly what will.</p>
+        <div class="actions">
+          <a class="button" href="https://github.com/munza/dotfiles/fork">
+            Fork on GitHub
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9.5M9 4.5 12.5 8 9 11.5"/></svg>
+          </a>
+          <a class="link" href="#start">Read the quick start</a>
+        </div>
+        <div class="cmd" data-copy="git clone https://github.com/munza/dotfiles.git ~/.dotfiles">
+          <code><span class="prompt" aria-hidden="true">$</span> git clone https://github.com/munza/dotfiles.git ~/.dotfiles</code>
+          <button type="button" class="copy">copy</button>
+        </div>
+        <p class="fine">macOS on Apple silicon · MIT licence</p>
+      </div>
+
+      <figure class="term" aria-label="Sample output of a rebuild with nh: build, package diff, then a confirm before switching">
+        <div class="term-bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="term-title">~/.dotfiles</span>
+          <button type="button" class="replay" aria-label="Replay the rebuild">replay</button>
+        </div>
+        <pre class="term-body" aria-live="off"><code id="term"></code></pre>
+        <figcaption>Sample output: adding Colima to my Mac.</figcaption>
+      </figure>
+    </section>
+
+    <section class="block" id="get" aria-labelledby="get-h">
+      <h2 id="get-h">What you get</h2>
+      <p class="block-lede">Sensible defaults for a terminal-first Mac, and a switch for every app.</p>
+
+      <div class="lists">
+        <div>
+          <h3>On for everyone</h3>
+          <dl class="mods">
+            <div><dt><code>zsh</code></dt><dd>Suggestions, highlighting, shared history, search on ↑ and ↓</dd></div>
+            <div><dt><code>git</code></dt><dd>Your name and email, common settings and aliases, delta for diffs</dd></div>
+            <div><dt><code>gh</code></dt><dd>GitHub CLI and git credential helper, with gh-dash</dd></div>
+            <div><dt><code>starship</code></dt><dd>A prompt from a file you edit in place</dd></div>
+            <div><dt><code>fzf</code> <code>zoxide</code> <code>eza</code></dt><dd>Fuzzy finding, jumping to directories, a better <code>ls</code></dd></div>
+            <div><dt><code>direnv</code></dt><dd>Per-project environments, cached with nix-direnv</dd></div>
+            <div><dt><code>nix-index</code></dt><dd>Which package has a missing command, and <code>, cmd</code> to run it</dd></div>
+            <div><dt><code>nh</code></dt><dd>Rebuild with a package diff and a confirm</dd></div>
+            <div><dt><code>fonts</code></dt><dd>JetBrains Mono Nerd Font for the terminal and editor</dd></div>
+          </dl>
+        </div>
+        <div>
+          <h3>Opt in</h3>
+          <dl class="mods">
+            <div><dt><code>ghostty</code> <code>zed</code> <code>neovim</code></dt><dd>Terminal and editors, with Neovim configured in plain Lua</dd></div>
+            <div><dt><code>aerospace</code></dt><dd>Tiling window manager</dd></div>
+            <div><dt><code>herdr</code></dt><dd>Terminal session manager</dd></div>
+            <div><dt><code>colima</code></dt><dd>Docker in a lightweight VM, with compose and buildx</dd></div>
+            <div><dt><code>yazi</code> <code>lazygit</code> <code>btop</code></dt><dd>File manager, git TUI, resource monitor</dd></div>
+            <div><dt><code>clamav</code></dt><dd>On-demand virus scans</dd></div>
+          </dl>
+          <p class="note">And on the system side: Nix with flakes and garbage collection, Homebrew installed for you, Touch ID for <code>sudo</code>, firewall on.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="start" aria-labelledby="start-h">
+      <h2 id="start-h">Quick start</h2>
+      <p class="block-lede">From a fresh Mac to a working setup. I ran these on a clean macOS 26 machine before publishing.</p>
+
+      <ol class="steps">
+        <li>
+          <h3>Install the command line tools</h3>
+          <p>Homebrew and Neovim's parsers need a compiler.</p>
+          <div class="cmd" data-copy="xcode-select --install"><code><span class="prompt" aria-hidden="true">$</span> xcode-select --install</code><button type="button" class="copy">copy</button></div>
+        </li>
+        <li>
+          <h3>Install Nix</h3>
+          <div class="cmd" data-copy="sh <(curl -L https://nixos.org/nix/install)"><code><span class="prompt" aria-hidden="true">$</span> sh &lt;(curl -L https://nixos.org/nix/install)</code><button type="button" class="copy">copy</button></div>
+        </li>
+        <li>
+          <h3>Clone your fork into <code>~/.dotfiles</code></h3>
+          <p><code>nh</code> and the editable config files expect it there.</p>
+          <div class="cmd" data-copy="git clone https://github.com/<you>/dotfiles.git ~/.dotfiles && cd ~/.dotfiles"><code><span class="prompt" aria-hidden="true">$</span> git clone https://github.com/&lt;you&gt;/dotfiles.git ~/.dotfiles &amp;&amp; cd ~/.dotfiles</code><button type="button" class="copy">copy</button></div>
+        </li>
+        <li>
+          <h3>Copy the example host</h3>
+          <p>Named after your Mac, with a user file named after your login.</p>
+          <div class="cmd multi" data-copy='host="$(scutil --get LocalHostName)"
+cp -r hosts/example "hosts/$host"
+mv "hosts/$host/users/example.nix" "hosts/$host/users/$(whoami).nix"'><code><span class="prompt" aria-hidden="true">$</span> host="$(scutil --get LocalHostName)"
+<span class="prompt" aria-hidden="true">$</span> cp -r hosts/example "hosts/$host"
+<span class="prompt" aria-hidden="true">$</span> mv "hosts/$host/users/example.nix" "hosts/$host/users/$(whoami).nix"</code><button type="button" class="copy">copy</button></div>
+        </li>
+        <li>
+          <h3>Customise</h3>
+          <p>Your name and email in <code>hosts/&lt;mac&gt;/darwin-configuration.nix</code>, and the apps you want in <code>hosts/&lt;mac&gt;/users/&lt;login&gt;.nix</code>.</p>
+        </li>
+        <li>
+          <h3>Track the new host</h3>
+          <p>Flakes only see files git knows about.</p>
+          <div class="cmd" data-copy="git add hosts"><code><span class="prompt" aria-hidden="true">$</span> git add hosts</code><button type="button" class="copy">copy</button></div>
+        </li>
+        <li>
+          <h3>Move the installer's shell files aside</h3>
+          <p>The Nix installer edits these, and nix-darwin takes them over but won't overwrite changes it didn't make.</p>
+          <div class="cmd multi" data-copy="sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin"><code><span class="prompt" aria-hidden="true">$</span> sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+<span class="prompt" aria-hidden="true">$</span> sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin</code><button type="button" class="copy">copy</button></div>
+        </li>
+        <li>
+          <h3>Build &amp; switch</h3>
+          <p>The first time, before nix-darwin is installed. Afterwards it's just <code>nh darwin switch --ask</code>.</p>
+          <div class="cmd multi" data-copy="sudo nix --extra-experimental-features 'nix-command flakes' run --inputs-from . 'nix-darwin#darwin-rebuild' -- switch --flake &quot;.#$(scutil --get LocalHostName)&quot;"><code><span class="prompt" aria-hidden="true">$</span> sudo nix --extra-experimental-features 'nix-command flakes' \
+    run --inputs-from . 'nix-darwin#darwin-rebuild' -- \
+    switch --flake ".#$(scutil --get LocalHostName)"</code><button type="button" class="copy">copy</button></div>
+        </li>
+      </ol>
+      <p class="note">Files already in the way, like an old <code>~/.zshrc</code>, go to the Trash rather than being overwritten.</p>
+    </section>
+
+    <section class="block" id="yours" aria-labelledby="yours-h">
+      <h2 id="yours-h">Make it yours</h2>
+      <p class="block-lede">Every module ships defaults. For each one, your host decides whether to use them, add to them, or replace them.</p>
+
+      <div class="tabs">
+        <div class="tablist" role="tablist" aria-label="Ways to change a default">
+          <button type="button" role="tab" id="tab-use" aria-controls="panel-use" aria-selected="true">use</button>
+          <button type="button" role="tab" id="tab-merge" aria-controls="panel-merge" aria-selected="false" tabindex="-1">merge</button>
+          <button type="button" role="tab" id="tab-override" aria-controls="panel-override" aria-selected="false" tabindex="-1">override</button>
+        </div>
+        <div class="panel" role="tabpanel" id="panel-use" aria-labelledby="tab-use" tabindex="0">
+          <pre><code><span class="c"># hosts/&lt;mac&gt;/users/&lt;login&gt;.nix</span>
+{
+  <span class="c"># Nothing to write: every module's defaults apply.</span>
+  <span class="c"># Turn apps on, and that's it.</span>
+  dotfiles.ghostty.enable = <span class="v">true</span>;
+  dotfiles.zed.enable = <span class="v">true</span>;
+}</code></pre>
+        </div>
+        <div class="panel" role="tabpanel" id="panel-merge" aria-labelledby="tab-merge" tabindex="0" hidden>
+          <pre><code><span class="c"># A value replaces that one default; a list is added to.</span>
+{
+  programs.git.settings.pull.rebase = <span class="v">false</span>;
+  programs.git.ignores = [ <span class="s">"*.log"</span> ];
+}</code></pre>
+        </div>
+        <div class="panel" role="tabpanel" id="panel-override" aria-labelledby="tab-override" tabindex="0" hidden>
+          <pre><code><span class="c"># Drop the module's defaults, keep only what it needs to work.</span>
+{ lib, ... }:
+{
+  dotfiles.zsh.defaults = <span class="v">false</span>;
+  programs.zsh.autosuggestion.enable = <span class="v">true</span>;
+
+  <span class="c"># Or replace one whole list.</span>
+  programs.zsh.setOptions = lib.mkForce [ <span class="s">"AUTO_PUSHD"</span> ];
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="pair">
+        <div>
+          <h3>Edit in place</h3>
+          <p>Some config is nicer by hand. Each host has a <code>config/</code> folder: Starship and the Neovim config live there and are linked into <code>~/.config</code>, so you edit them without rebuilding. Zed, Herdr and Colima keep their own settings files writable, with yours merged in on every rebuild.</p>
+        </div>
+        <div>
+          <h3>Secrets, two ways</h3>
+          <p>One Mac: <code>KEY=value</code> lines in <code>~/.config/secrets.env</code>, outside the repo, loaded by every shell. Several Macs: <a href="https://github.com/getsops/sops">sops</a>-encrypted files in the repo, decrypted at login with each Mac's SSH key.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="daily" aria-labelledby="daily-h">
+      <h2 id="daily-h">Every day</h2>
+      <p class="block-lede">Run from any directory.</p>
+      <dl class="mods daily">
+        <div><dt><code>nh darwin switch --ask</code></dt><dd>Build, show the package diff, switch on yes</dd></div>
+        <div><dt><code>nh darwin switch --update --ask</code></dt><dd>The same, after updating the flake inputs</dd></div>
+        <div><dt><code>nh search ripgrep</code></dt><dd>Find a package</dd></div>
+        <div><dt><code>nh clean all --keep-since 30d</code></dt><dd>Delete old generations</dd></div>
+        <div><dt><code>sudo darwin-rebuild --rollback</code></dt><dd>Back to the previous generation</dd></div>
+      </dl>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-h">
+      <h2 id="closing-h">Fork it. Make it yours.</h2>
+      <div class="actions">
+        <a class="button" href="https://github.com/munza/dotfiles/fork">
+          Fork on GitHub
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9.5M9 4.5 12.5 8 9 11.5"/></svg>
+        </a>
+        <a class="link" href="https://github.com/munza/dotfiles#readme">Read the README</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Made by <a href="https://tawsifaqib.com">Tawsif Aqib</a>. Built with <a href="https://github.com/numtide/blueprint">blueprint</a>, <a href="https://github.com/nix-darwin/nix-darwin">nix-darwin</a> and <a href="https://github.com/nix-community/home-manager">home-manager</a>.</p>
+    <p><a href="https://github.com/munza/dotfiles/blob/main/LICENSE">MIT licence</a> · <a href="https://github.com/munza/dotfiles">github.com/munza/dotfiles</a></p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
