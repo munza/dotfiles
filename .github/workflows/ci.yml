@@ -29,3 +29,11 @@ jobs:
       # Builds this system's checks (formatting included) and evaluates the rest.
       - name: Flake check
         run: nix flake check --all-systems
+
+      # What a new user gets: a project from the template, checked against this commit.
+      - name: Template check
+        run: |
+          cd "$(mktemp -d)"
+          nix flake init -t "$GITHUB_WORKSPACE"
+          git init -q && git add -A
+          nix flake check --all-systems --override-input dotfiles "path:$GITHUB_WORKSPACE"
