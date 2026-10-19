@@ -1,6 +1,6 @@
 # Tawsif's home. Imports hold each tool's settings and the font; the dotfiles
 # block below turns tools on.
-{ pkgs, ... }:
+{ ... }:
 {
   imports = [
     ./aerospace.nix
@@ -9,11 +9,15 @@
     ./gh.nix
     ./ghostty.nix
     ./herdr.nix
+    ./neovim.nix
     ./starship.nix
     ./zed.nix
   ];
 
   dotfiles = {
+    # Editable files (the Neovim config) live in this host's folder.
+    configDir = "hosts/macmini/config";
+
     aerospace.enable = true;
     btop.enable = true;
     clamav.enable = true;
@@ -21,16 +25,12 @@
     ghostty.enable = true;
     herdr.enable = true;
     lazygit.enable = true;
+    neovim.enable = true;
     yazi.enable = true;
     zed.enable = true;
   };
 
-  # Plain Neovim for quick edits; its config is parked for now.
-  home.packages = [ pkgs.neovim ];
-
   home.sessionVariables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
     # Pi background jobs, without delegation, Fusion or provider overrides.
     PI_BG_FEATURES = "process";
     MANPAGER = "less -R --use-color -Dd+B -Du+G";
