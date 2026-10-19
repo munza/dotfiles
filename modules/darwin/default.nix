@@ -10,7 +10,9 @@ in
   imports = [ flake.modules.common.user ];
 
   # The users/ file already names the user, so hosts don't have to repeat it.
-  dotfiles.user.name = lib.mkIf (builtins.length hmUsers == 1) (lib.mkDefault (builtins.head hmUsers));
+  dotfiles.user.name = lib.mkIf (builtins.length hmUsers == 1) (
+    lib.mkDefault (builtins.head hmUsers)
+  );
 
   system.primaryUser = user.name;
   users.users = lib.genAttrs hmUsers (name: {
