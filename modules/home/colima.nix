@@ -1,6 +1,7 @@
 # Colima: a Docker runtime in a lightweight VM, started at login, plus the
-# docker command. Its config stays writable; settings set from the host are
-# merged in on rebuild and win.
+# docker command (compose and buildx included). Its config stays writable;
+# settings set from the host are merged in on rebuild and win, e.g.
+#   services.colima.profiles.default.settings = { cpu = 4; memory = 8; };
 { flake, ... }:
 flake.lib.mkModule {
   name = "colima";
@@ -8,7 +9,7 @@ flake.lib.mkModule {
   enable = false;
 
   glue =
-    { pkgs, ... }:
+    { config, ... }:
     {
       services.colima = {
         enable = true;
@@ -20,6 +21,8 @@ flake.lib.mkModule {
           mutableSettings = true;
         };
       };
-      home.packages = [ pkgs.docker-client ];
+
+      # The same docker colima uses; nixpkgs wraps it with compose and buildx.
+      home.packages = [ config.services.colima.dockerPackage ];
     };
 }
