@@ -11,6 +11,8 @@ vim.pack.add({
   "https://github.com/MeanderingProgrammer/render-markdown.nvim",
   "https://github.com/rafamadriz/friendly-snippets", -- snippet collection for mini.snippets
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
+  -- Only its queries are used, by mini.ai below.
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects", version = "main" },
   -- The Lua half of herdr-nvim; the herdr side is `herdr plugin install ChmaraX/herdr-nvim`.
   -- Keep this rev in step with `herdr plugin list` so both halves speak the same protocol.
   { src = "https://github.com/ChmaraX/herdr-nvim", version = "e2ec32e7bbbb1eefd64363414b5806f84eedd6bc" },
@@ -36,7 +38,7 @@ for _, module in ipairs({
   "icons", "pick", "files", "bracketed", "extra", "sessions",
   "statusline", "tabline", "cursorword", "notify", "animate",
   -- Editing
-  "pairs", "surround", "comment", "ai", "indentscope", "splitjoin",
+  "pairs", "surround", "comment", "indentscope", "splitjoin",
   "move", "jump", "jump2d", "trailspace", "align", "bufremove",
   -- As-you-type completion; attaches to LSP servers on its own.
   "completion",
@@ -44,6 +46,20 @@ for _, module in ipairs({
 }) do
   require("mini." .. module).setup()
 end
+
+-- Text objects from tree-sitter on top of mini.ai's own (f stays function call):
+-- F function definition, c class, o block/loop/conditional, e.g. daF, vic, yio.
+local ai = require("mini.ai")
+ai.setup({
+  custom_textobjects = {
+    F = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
+    c = ai.gen_spec.treesitter({ a = "@class.outer", i = "@class.inner" }),
+    o = ai.gen_spec.treesitter({
+      a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+      i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+    }),
+  },
+})
 
 -- Snippets from friendly-snippets, offered in the completion menu by a small
 -- built-in server. <C-j> expands, <C-l>/<C-h> jump between fields, <C-c> stops.
