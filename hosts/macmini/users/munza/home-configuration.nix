@@ -1,10 +1,11 @@
-# Tawsif's home. Imports hold each tool's settings; the dotfiles block below
-# picks the font and turns tools on.
+# Tawsif's home. Imports hold each tool's settings and the font; the dotfiles
+# block below turns tools on.
 { pkgs, ... }:
 {
   imports = [
     ./aerospace.nix
     ./colima.nix
+    ./fonts.nix
     ./gh.nix
     ./ghostty.nix
     ./herdr.nix
@@ -13,11 +14,6 @@
   ];
 
   dotfiles = {
-    fonts.mono = {
-      name = "AnnotationM Nerd Font Mono";
-      package = pkgs.nerd-fonts.annotationmono;
-    };
-
     aerospace.enable = true;
     btop.enable = true;
     clamav.enable = true;
