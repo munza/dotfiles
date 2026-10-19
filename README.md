@@ -107,7 +107,14 @@ On a Mac with Apple silicon:
    git add hosts
    ```
 
-7. **Build & switch** — the first time, before nix-darwin is installed:
+7. **Move the installer's shell files aside** — the Nix installer adds a few lines to these, and nix-darwin takes them over but won't overwrite changes it didn't make:
+
+   ```sh
+   sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin
+   sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin
+   ```
+
+8. **Build & switch** — the first time, before nix-darwin is installed:
 
    ```sh
    sudo nix --extra-experimental-features 'nix-command flakes' \
@@ -115,7 +122,7 @@ On a Mac with Apple silicon:
      switch --flake ".#$(scutil --get LocalHostName)"
    ```
 
-Then open a new terminal. Files already in the way, like an old `~/.zshrc`, go to the Trash rather than being overwritten. If the first switch stops on unexpected files in `/etc` (left by the Nix installer), rename them as the message says and run it again.
+Then open a new terminal. Files already in the way, like an old `~/.zshrc`, go to the Trash rather than being overwritten.
 
 `hosts/macmini` is my own Mac — delete it in your fork, or keep it around as a fuller example.
 

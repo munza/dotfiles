@@ -8,9 +8,11 @@
 #         hosts/<mac-name>/users/<login>.nix        # whoami
 #   5. Fill in your name and email below.
 #   6. git add hosts/<mac-name>                     # flakes only see files git tracks
-#   7. sudo nix --extra-experimental-features 'nix-command flakes' \
+#   7. sudo mv /etc/zshrc /etc/zshrc.before-nix-darwin      # nix-darwin takes these
+#      sudo mv /etc/bashrc /etc/bashrc.before-nix-darwin    # over from the Nix installer
+#   8. sudo nix --extra-experimental-features 'nix-command flakes' \
 #        run --inputs-from . 'nix-darwin#darwin-rebuild' -- switch --flake '.#<mac-name>'
-#   8. From then on: nh darwin switch --ask
+#   9. From then on: nh darwin switch --ask
 #
 # Leave this folder as it is; CI checks it so the example always works.
 { flake, ... }:
