@@ -6,6 +6,7 @@
     flake.modules.common.user
     flake.homeModules.aerospace
     flake.homeModules.btop
+    flake.homeModules.clamav
     flake.homeModules.colima
     flake.homeModules.config-links
     flake.homeModules.direnv
