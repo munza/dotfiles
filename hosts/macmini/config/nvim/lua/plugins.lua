@@ -6,6 +6,7 @@ vim.pack.add({
   "https://github.com/EdenEast/nightfox.nvim",
   "https://github.com/f-person/auto-dark-mode.nvim",
   "https://github.com/neovim/nvim-lspconfig",
+  "https://github.com/b0o/SchemaStore.nvim", -- JSON/YAML schemas for jsonls and yamlls
   "https://github.com/stevearc/conform.nvim",
   "https://github.com/MeanderingProgrammer/render-markdown.nvim",
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },

@@ -9,7 +9,16 @@
 
     # JavaScript, TypeScript and web formats (JSON, YAML, Markdown, HTML, CSS)
     typescript-language-server
+    vscode-langservers-extracted # JSON, HTML, CSS
+    yaml-language-server
+    marksman
     prettierd
+
+    # TOML (also its formatter)
+    taplo
+
+    # Dockerfile
+    dockerfile-language-server
 
     # Python: types, then linting and formatting
     basedpyright

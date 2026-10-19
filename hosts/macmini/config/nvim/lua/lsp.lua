@@ -7,6 +7,13 @@ vim.lsp.enable({
   "bashls",
   "lua_ls",
   "ts_ls",
+  "jsonls", -- schemas from SchemaStore (lsp/jsonls.lua)
+  "yamlls", -- same (lsp/yamlls.lua)
+  "html",
+  "cssls",
+  "marksman", -- Markdown links and headings
+  "taplo", -- TOML
+  "dockerls",
   "basedpyright", -- types
   "ruff", -- lint and format
   "expert", -- Elixir
