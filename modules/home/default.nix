@@ -20,6 +20,7 @@
     flake.homeModules.lazygit
     flake.homeModules.nh
     flake.homeModules.nix-index
+    flake.homeModules.secrets-env
     flake.homeModules.starship
     flake.homeModules.yazi
     flake.homeModules.zed
