@@ -7,6 +7,7 @@
     flake.homeModules.config-links
     flake.homeModules.direnv
     flake.homeModules.eza
+    flake.homeModules.fonts
     flake.homeModules.fzf
     flake.homeModules.gh
     flake.homeModules.git
