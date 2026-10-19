@@ -4,6 +4,7 @@
   config,
   lib,
   pkgs,
+  hostName,
   ...
 }:
 let
@@ -55,7 +56,11 @@ in
     # empty extra user when the name doesn't match the users/ file.
     home-manager.sharedModules = [
       flake.homeModules.default
-      { dotfiles.user = user; }
+      {
+        dotfiles.user = user;
+        # Each host keeps its editable files next to its config.
+        dotfiles.configDir = lib.mkDefault "hosts/${hostName}/config";
+      }
       config.dotfiles.home
     ];
 

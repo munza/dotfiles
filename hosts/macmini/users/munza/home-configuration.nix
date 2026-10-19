@@ -15,9 +15,6 @@
   ];
 
   dotfiles = {
-    # Editable files (the Neovim config) live in this host's folder.
-    configDir = "hosts/macmini/config";
-
     aerospace.enable = true;
     btop.enable = true;
     clamav.enable = true;

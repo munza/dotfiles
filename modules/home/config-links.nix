@@ -20,9 +20,9 @@ in
 
     configDir = lib.mkOption {
       type = lib.types.str;
-      default = "config";
-      example = "hosts/my-mac/config";
-      description = "Folder in your repo, relative to its root, that holds this host's editable config files.";
+      defaultText = lib.literalExpression ''"hosts/<host>/config"'';
+      example = "shared/config";
+      description = "Folder in your repo, relative to its root, that holds this host's editable config files. darwinModules.default sets it to hosts/<host>/config.";
     };
 
     configLinks = lib.mkOption {
