@@ -29,3 +29,20 @@ jobs:
       # Builds this system's checks (formatting included) and evaluates the rest.
       - name: Flake check
         run: nix flake check --all-systems
+
+  # Builds every host for real (evaluation alone can't catch a failing build),
+  # on Apple silicon like the Macs they're for.
+  darwin:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          # Prebuilt llm-agents packages (Claude Code, pi) used by hosts/macmini.
+          extra_nix_config: |
+            extra-substituters = https://cache.numtide.com
+            extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
+
+      - name: Build every host
+        run: nix flake check
