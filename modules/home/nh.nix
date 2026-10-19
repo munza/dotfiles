@@ -3,17 +3,18 @@
 #   nh darwin switch --update --ask   same, after updating flake inputs
 #   nh search <term>                  find a package
 #   nh clean all --keep-since 30d     delete old generations
-{ config, lib, ... }:
-{
-  options.dotfiles.nh.enable = lib.mkEnableOption "nh" // {
-    default = true;
-  };
+{ flake, ... }:
+flake.lib.mkModule {
+  name = "nh";
+  description = "nh";
 
-  config = lib.mkIf config.dotfiles.nh.enable {
-    programs.nh = {
-      enable = true;
-      # Works from any directory, not just inside the repo.
-      flake = config.dotfiles.flakeDir;
+  glue =
+    { config, ... }:
+    {
+      programs.nh = {
+        enable = true;
+        # Works from any directory, not just inside the repo.
+        flake = config.dotfiles.flakeDir;
+      };
     };
-  };
 }

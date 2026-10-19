@@ -1,23 +1,26 @@
-# Git with your name and email from dotfiles.user, a few modern defaults,
-# and delta for readable diffs.
-{ config, lib, ... }:
-let
-  inherit (config.dotfiles) user;
-in
-{
-  options.dotfiles.git.enable = lib.mkEnableOption "git" // {
-    default = true;
-  };
+# Git, with your name and email from dotfiles.user. Defaults add common
+# settings and delta for readable diffs.
+{ flake, ... }:
+flake.lib.mkModule {
+  name = "git";
+  description = "git";
 
-  config = lib.mkIf config.dotfiles.git.enable {
+  glue =
+    { config, ... }:
+    {
+      programs.git = {
+        enable = true;
+        settings.user = {
+          name = config.dotfiles.user.fullName;
+          email = config.dotfiles.user.email;
+        };
+      };
+    };
+
+  defaults = {
     programs.git = {
-      enable = true;
       ignores = [ ".DS_Store" ];
-
       settings = {
-        user.name = user.fullName;
-        user.email = user.email;
-
         init.defaultBranch = "main";
         pull.rebase = true;
         # First push of a new branch sets its upstream; no --set-upstream needed.

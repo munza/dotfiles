@@ -6,11 +6,14 @@
     flake.modules.common.user
     flake.homeModules.config-links
     flake.homeModules.direnv
+    flake.homeModules.eza
+    flake.homeModules.fzf
     flake.homeModules.gh
     flake.homeModules.git
     flake.homeModules.nh
     flake.homeModules.nix-index
     flake.homeModules.starship
+    flake.homeModules.zoxide
     flake.homeModules.zsh
   ];
 

@@ -1,21 +1,2 @@
-# Starship prompt: https://starship.rs/config/
-# Linked to ~/.config/starship.toml; edits apply in the next prompt.
-
-# Path, git and nix-shell on the first line, the prompt on the second.
-format = """
-$username$hostname$directory$git_branch$git_status$nix_shell$cmd_duration
-$character"""
-
-[hostname]
-ssh_only = true
-
-[directory]
-truncation_length = 3
-truncate_to_repo = true
-
-[cmd_duration]
-min_time = 2000
-
-[character]
-success_symbol = "[❯](green)"
-error_symbol = "[❯](red)"
+# Starship prompt, linked to ~/.config/starship.toml: edits apply at the next prompt.
+# Empty means starship's defaults. Options: https://starship.rs/config/
