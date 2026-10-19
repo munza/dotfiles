@@ -114,6 +114,22 @@
         "type": "github"
       }
     },
+    "homebrew-orca": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1792391435,
+        "narHash": "sha256-X5k47nhlDxe0o0teZo2zRq/IrixB5L8R+JXHziZFOvw=",
+        "owner": "stablyai",
+        "repo": "homebrew-orca",
+        "rev": "7a1ce268e74d8edddf621409009af33f0b568380",
+        "type": "github"
+      },
+      "original": {
+        "owner": "stablyai",
+        "repo": "homebrew-orca",
+        "type": "github"
+      }
+    },
     "llm-agents": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -231,6 +247,7 @@
       "inputs": {
         "blueprint": "blueprint",
         "home-manager": "home-manager",
+        "homebrew-orca": "homebrew-orca",
         "llm-agents": "llm-agents",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",

@@ -21,6 +21,10 @@
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
+    # Homebrew tap for Orca, pinned for hosts/macmini.
+    homebrew-orca.url = "github:stablyai/homebrew-orca";
+    homebrew-orca.flake = false;
+
     blueprint.url = "github:numtide/blueprint";
     blueprint.inputs.nixpkgs.follows = "nixpkgs";
 
