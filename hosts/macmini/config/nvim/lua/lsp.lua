@@ -1,14 +1,6 @@
 -- Language servers, using Neovim's built-in LSP client; nvim-lspconfig only
--- supplies each server's command and root markers. Servers come from Nix.
-
-vim.lsp.config("rust_analyzer", {
-  settings = {
-    ["rust-analyzer"] = {
-      check = { command = "clippy" }, -- clippy on save, not plain cargo check
-      cargo = { features = "all" }, -- every feature combination of the workspace
-    },
-  },
-})
+-- supplies each server's command and root markers. Servers come from Nix;
+-- settings for one server go in lsp/<server>.lua.
 
 vim.lsp.enable({
   "nixd",
@@ -38,5 +30,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("<leader>lR", vim.lsp.buf.rename, "Rename symbol")
     map("<leader>li", vim.lsp.buf.implementation, "Implementation")
     map("<leader>lt", vim.lsp.buf.type_definition, "Type definition")
+    map("<leader>lf", function()
+      require("conform").format({ async = true, lsp_format = "fallback" })
+    end, "Format buffer")
   end,
 })

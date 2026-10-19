@@ -19,14 +19,11 @@ map("n", "<leader>fe", function()
   end
 end, "Toggle file explorer")
 
--- Diagnostics, help, format, markdown
+-- Diagnostics, help, markdown
 map("n", "<leader>dd", function()
   MiniExtra.pickers.diagnostics({ scope = "all" })
 end, "Diagnostics (all buffers)")
 map("n", "<leader>hk", MiniExtra.pickers.keymaps, "Keymaps")
-map("n", "<leader>lf", function()
-  require("conform").format({ async = true, lsp_format = "fallback" })
-end, "Format buffer")
 map("n", "<leader>mp", "<cmd>RenderMarkdown toggle<CR>", "Toggle markdown preview")
 
 -- Sessions and buffers
@@ -117,6 +114,7 @@ local groups = {}
 for key, name in pairs({
   a = "Agent",
   b = "Buffer",
+  d = "Diagnostics",
   f = "Find",
   h = "Help",
   l = "LSP",
