@@ -8,6 +8,7 @@
     flake.homeModules.direnv
     flake.homeModules.gh
     flake.homeModules.git
+    flake.homeModules.nh
     flake.homeModules.nix-index
     flake.homeModules.starship
     flake.homeModules.zsh

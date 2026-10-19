@@ -5,6 +5,7 @@
 #         hosts/<mac-name>/users/<login>.nix     # whoami
 #   3. Fill in your name and email below.
 #   4. sudo nix run nix-darwin -- switch --flake .#<mac-name>
+#   5. From then on: nh darwin switch --ask
 #
 # Leave this folder as it is; CI checks it so the example always works.
 { flake, ... }:
