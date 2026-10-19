@@ -9,12 +9,14 @@ flake.lib.mkModule {
   enable = false;
 
   glue =
-    { config, ... }:
+    { config, lib, ... }:
     {
       programs.zed-editor = {
         enable = true;
         userSettings.buffer_font_family = config.dotfiles.fonts.mono.name;
       };
+      # nixpkgs names the CLI zeditor, since another program is called zed.
+      home.shellAliases.zed = lib.mkIf (config.programs.zed-editor.package != null) "zeditor";
     };
 
   defaults =
