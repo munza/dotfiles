@@ -5,6 +5,7 @@
   dotfiles.aerospace.enable = true;
   dotfiles.btop.enable = true;
   dotfiles.ghostty.enable = true;
+  dotfiles.herdr.enable = true;
   dotfiles.lazygit.enable = true;
   dotfiles.yazi.enable = true;
   dotfiles.zed.enable = true;
