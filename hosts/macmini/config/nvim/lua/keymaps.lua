@@ -11,13 +11,24 @@ map("n", "<leader>fg", MiniPick.builtin.grep_live, "Live grep")
 map("n", "<leader>fb", MiniPick.builtin.buffers, "Find buffers")
 map("n", "<leader>fh", MiniPick.builtin.help, "Help tags")
 map("n", "<leader>fo", MiniExtra.pickers.oldfiles, "Recent files")
-map("n", "<leader>fB", MiniExtra.pickers.git_branches, "Git branches")
 map("n", "<leader>fe", function()
   -- close() returns nil only when no explorer is open; false means closing was refused.
   if MiniFiles.close() == nil then
     MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
   end
 end, "Toggle file explorer")
+
+-- Git: mini.git and mini.diff; ]h and [h jump between hunks.
+map("n", "<leader>go", function()
+  MiniDiff.toggle_overlay(0)
+end, "Toggle diff overlay")
+map({ "n", "x" }, "<leader>gs", MiniGit.show_at_cursor, "Show at cursor")
+map("n", "<leader>gh", function()
+  MiniExtra.pickers.git_hunks({ path = vim.api.nvim_buf_get_name(0) })
+end, "Hunks (buffer)")
+map("n", "<leader>gH", MiniExtra.pickers.git_hunks, "Hunks (repo)")
+map("n", "<leader>gc", MiniExtra.pickers.git_commits, "Commits")
+map("n", "<leader>gb", MiniExtra.pickers.git_branches, "Branches")
 
 -- Diagnostics, help, markdown
 map("n", "<leader>dd", function()
@@ -81,7 +92,7 @@ map("n", "<leader>vi", "vi", "+Inside textobject", { remap = true })
 map("n", "<leader>va", "va", "+Around textobject", { remap = true })
 
 -- Leader aliases into built-in prefixes; remap so mini.clue's popup for the
--- real prefix opens (marks, registers, brackets, folds, go-to, surround).
+-- real prefix opens (marks, registers, brackets, folds, surround).
 for key, desc in pairs({
   ["'"] = "+Jump",
   ['"'] = "+Yank/Paste",
@@ -89,7 +100,6 @@ for key, desc in pairs({
   ["["] = "+Previous",
   ["]"] = "+Next",
   z = "+Fold/scroll",
-  g = "+Go-to",
   vv = "Visual (charwise)",
   vV = "Visual (linewise)",
   vb = "Visual (blockwise)",
@@ -116,6 +126,7 @@ for key, name in pairs({
   b = "Buffer",
   d = "Diagnostics",
   f = "Find",
+  g = "Git",
   h = "Help",
   l = "LSP",
   m = "Markdown",
