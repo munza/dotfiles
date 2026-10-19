@@ -1,9 +1,10 @@
-# Tawsif's home. Each tool's settings live in its own file next to this one;
-# this file picks the modules and sets home-wide things.
+# Tawsif's home. Imports hold each tool's settings; the dotfiles block below
+# picks the font and turns tools on.
 { pkgs, ... }:
 {
   imports = [
     ./aerospace.nix
+    ./colima.nix
     ./gh.nix
     ./ghostty.nix
     ./herdr.nix
@@ -20,6 +21,7 @@
     aerospace.enable = true;
     btop.enable = true;
     clamav.enable = true;
+    colima.enable = true;
     ghostty.enable = true;
     herdr.enable = true;
     lazygit.enable = true;

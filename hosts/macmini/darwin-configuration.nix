@@ -34,8 +34,7 @@
       trash-cli
       gitleaks
 
-      # Containers
-      docker
+      # Containers (docker itself comes with the colima module)
       kubectl
       lazydocker
 
@@ -98,7 +97,6 @@
       "linear"
       "llama-app"
       "opensuperwhisper"
-      "orbstack"
       "pdfcraft"
       "proton-drive"
       "proton-pass"
