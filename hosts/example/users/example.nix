@@ -3,6 +3,7 @@
 {
   # Opt-in apps; remove the ones you don't want.
   dotfiles.ghostty.enable = true;
+  dotfiles.zed.enable = true;
 
   # Set once at install time; never bump on upgrade.
   home.stateVersion = "26.05";
