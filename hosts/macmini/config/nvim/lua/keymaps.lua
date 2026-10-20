@@ -32,7 +32,7 @@ map("n", "<leader>gb", MiniExtra.pickers.git_branches, "Branches")
 
 -- Diagnostics, help, markdown
 map("n", "<leader>fd", function()
-  MiniExtra.pickers.diagnostics({ scope = "all" })
+  MiniExtra.pickers.diagnostic({ scope = "all" })
 end, "Diagnostics (all buffers)")
 map("n", "<leader>hk", MiniExtra.pickers.keymaps, "Keymaps")
 map("n", "<leader>mp", "<cmd>RenderMarkdown toggle<CR>", "Toggle markdown preview")
