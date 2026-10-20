@@ -23,9 +23,12 @@
       curl
       httpie
       jq
+      yq-go # jq for YAML and TOML
       gping
       tealdeer
       tree
+      watchexec # rerun a command on file changes
+      hyperfine # benchmark commands
       bat
       ripgrep
       dust
@@ -36,6 +39,7 @@
 
       # Containers (docker itself comes with the colima module)
       kubectl
+      k9s
       lazydocker
 
       # Build environments
