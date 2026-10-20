@@ -8,6 +8,8 @@ vim.pack.add({
   "https://github.com/neovim/nvim-lspconfig",
   "https://github.com/b0o/SchemaStore.nvim", -- JSON/YAML schemas for jsonls and yamlls
   "https://github.com/stevearc/conform.nvim",
+  "https://github.com/mfussenegger/nvim-dap",
+  "https://github.com/igorlfs/nvim-dap-view",
   "https://github.com/MeanderingProgrammer/render-markdown.nvim",
   "https://github.com/rafamadriz/friendly-snippets", -- snippet collection for mini.snippets
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
@@ -95,6 +97,20 @@ hipatterns.setup({
     hex_color = hipatterns.gen_highlighter.hex_color(),
   },
 })
+
+-- Debugging with nvim-dap; dap-view opens with a session and closes after it.
+-- Go uses delve (dlv) from Nix. Other languages need an adapter added here.
+local dap = require("dap")
+dap.adapters.go = {
+  type = "server",
+  port = "${port}",
+  executable = { command = "dlv", args = { "dap", "-l", "127.0.0.1:${port}" } },
+}
+dap.configurations.go = {
+  { type = "go", name = "Debug package", request = "launch", program = "${fileDirname}" },
+  { type = "go", name = "Debug tests in package", request = "launch", mode = "test", program = "${fileDirname}" },
+}
+require("dap-view").setup({ auto_toggle = true })
 
 -- Format with the filetype's formatter, or the language server's when none is set.
 require("conform").setup({

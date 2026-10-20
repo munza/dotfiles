@@ -31,7 +31,7 @@ map("n", "<leader>gc", MiniExtra.pickers.git_commits, "Commits")
 map("n", "<leader>gb", MiniExtra.pickers.git_branches, "Branches")
 
 -- Diagnostics, help, markdown
-map("n", "<leader>dd", function()
+map("n", "<leader>fd", function()
   MiniExtra.pickers.diagnostics({ scope = "all" })
 end, "Diagnostics (all buffers)")
 map("n", "<leader>hk", MiniExtra.pickers.keymaps, "Keymaps")
@@ -81,6 +81,23 @@ for _, w in ipairs(windows) do
   end
 end
 map("n", "<leader>ws", "<cmd>split<CR>", "Split horizontal")
+
+-- Debug (nvim-dap). Steps are repeatable like windows: <leader>d then n n i o.
+local dap = require("dap")
+map("n", "<leader>db", dap.toggle_breakpoint, "Toggle breakpoint")
+map("n", "<leader>dB", function()
+  dap.set_breakpoint(vim.fn.input("Condition: "))
+end, "Conditional breakpoint")
+map("n", "<leader>dc", dap.continue, "Start/continue")
+map("n", "<leader>dl", dap.run_last, "Run last")
+map("n", "<leader>dC", dap.run_to_cursor, "Run to cursor")
+map("n", "<leader>dr", dap.restart, "Restart")
+map("n", "<leader>dq", dap.terminate, "Terminate")
+map("n", "<leader>du", require("dap-view").toggle, "Toggle debug view")
+for key, step in pairs({ n = { "step_over", "Step over" }, i = { "step_into", "Step into" }, o = { "step_out", "Step out" } }) do
+  map("n", "<leader>d" .. key, dap[step[1]], step[2])
+  table.insert(repeatable, { mode = "n", keys = "<leader>d" .. key, postkeys = "<leader>d" })
+end
 map("n", "<leader>wv", "<cmd>vsplit<CR>", "Split vertical")
 
 -- U redoes, mirroring u (by default it's the rarely used "undo line").
@@ -124,7 +141,7 @@ local groups = {}
 for key, name in pairs({
   a = "Agent",
   b = "Buffer",
-  d = "Diagnostics",
+  d = "Debug",
   f = "Find",
   g = "Git",
   h = "Help",
