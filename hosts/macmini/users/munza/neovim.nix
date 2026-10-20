@@ -5,6 +5,7 @@
   programs.neovim.extraPackages = with pkgs; [
     # Shell
     bash-language-server
+    shellcheck # bashls's diagnostics
     shfmt
 
     # JavaScript, TypeScript and web formats (JSON, YAML, Markdown, HTML, CSS)
