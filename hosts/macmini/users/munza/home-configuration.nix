@@ -35,6 +35,8 @@
 
   home.sessionPath = [ "$HOME/.local/bin" ];
 
+  home.shellAliases.tree = "tree -a -I .git";
+
   # Set once at install time; never bump on upgrade.
   home.stateVersion = "26.05";
 }

@@ -175,6 +175,7 @@
       AppleInterfaceStyleSwitchesAutomatically = true;
       AppleMeasurementUnits = "Centimeters";
       AppleMetricUnits = 1;
+      AppleShowAllFiles = true; # in open and save dialogs too
       AppleTemperatureUnit = "Celsius";
       AppleScrollerPagingBehavior = true;
       AppleShowScrollBars = "Automatic";
