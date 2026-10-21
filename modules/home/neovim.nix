@@ -4,7 +4,8 @@
 # servers and formatters come from Nix, on Neovim's PATH only.
 #
 # Defaults add what editing Lua and Nix needs, plus tree-sitter and ripgrep
-# for parsers and search. Add your languages' tools from the host, e.g.
+# for parsers and search; ripgrep includes hidden files, so the file and grep
+# pickers find dotfiles. Add your languages' tools from the host, e.g.
 #   programs.neovim.extraPackages = [ pkgs.gopls pkgs.rust-analyzer ];
 { flake, ... }:
 flake.lib.mkModule {
@@ -42,5 +43,14 @@ flake.lib.mkModule {
         nixd
         nixfmt
       ];
+
+      # Through RIPGREP_CONFIG_PATH, so it applies to rg in the shell as well.
+      programs.ripgrep = {
+        enable = true;
+        arguments = [
+          "--hidden"
+          "--glob=!.git/"
+        ];
+      };
     };
 }

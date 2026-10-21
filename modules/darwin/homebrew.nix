@@ -18,6 +18,12 @@ flake.lib.mkModule {
         # Puts brew and the apps it installs on PATH.
         enableZshIntegration = true;
       };
+      # enableZshIntegration only covers interactive shells; login items
+      # such as the arc menu run `zsh -lc` and need it too.
+      environment.systemPath = [
+        "${config.homebrew.prefix}/bin"
+        "${config.homebrew.prefix}/sbin"
+      ];
 
       nix-homebrew = {
         enable = true;
