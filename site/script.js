@@ -1,12 +1,24 @@
 // Theme follows the system, live. The toggle overrides it for this visit only,
 // and a change of system theme hands control back to the system.
+// Dark unless the system asks for light.
 const root = document.documentElement;
-const systemDark = matchMedia("(prefers-color-scheme: dark)");
-document.querySelector(".theme").addEventListener("click", () => {
-  const dark = root.dataset.theme ? root.dataset.theme === "ink" : systemDark.matches;
-  root.dataset.theme = dark ? "paper" : "ink";
+const systemLight = matchMedia("(prefers-color-scheme: light)");
+const themeButtons = document.querySelectorAll("[data-set-theme]");
+function showTheme() {
+  const theme = root.dataset.theme || (systemLight.matches ? "light" : "dark");
+  for (const b of themeButtons) b.setAttribute("aria-pressed", b.dataset.setTheme === theme);
+}
+for (const b of themeButtons) {
+  b.addEventListener("click", () => {
+    root.dataset.theme = b.dataset.setTheme;
+    showTheme();
+  });
+}
+systemLight.addEventListener("change", () => {
+  delete root.dataset.theme;
+  showTheme();
 });
-systemDark.addEventListener("change", () => delete root.dataset.theme);
+showTheme();
 
 // Copy buttons copy the command, not the prompt characters around it.
 for (const block of document.querySelectorAll(".cmd")) {
