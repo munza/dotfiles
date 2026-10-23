@@ -30,8 +30,6 @@
   };
 
   home.sessionVariables = {
-    # Pi background jobs, without delegation, Fusion or provider overrides.
-    PI_BG_FEATURES = "process";
     MANPAGER = "less -R --use-color -Dd+B -Du+G";
   };
 
