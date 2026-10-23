@@ -34,6 +34,10 @@
     MANPAGER = "less -R --use-color -Dd+B -Du+G";
   };
 
+  # Global rules for coding agents, shared by pi and Claude Code.
+  programs.pi-coding-agent.context = ./AGENTS.md;
+  home.file.".claude/CLAUDE.md".source = ./AGENTS.md;
+
   home.sessionPath = [ "$HOME/.local/bin" ];
 
   home.shellAliases.tree = "tree -a -I .git";

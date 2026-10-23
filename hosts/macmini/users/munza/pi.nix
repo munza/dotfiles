@@ -1,4 +1,5 @@
 # Pi settings, merged into ~/.pi/agent/settings.json on rebuild.
+{ lib, pkgs, ... }:
 {
   programs.pi-coding-agent.settings = {
     packages = [
@@ -12,5 +13,8 @@
     ];
     defaultThinkingLevel = "medium";
     theme = "system";
+    # Bash 5 for the agent's commands; macOS's /bin/bash is 3.2.
+    shellPath = lib.getExe pkgs.bash;
+    enableInstallTelemetry = false;
   };
 }
