@@ -1,6 +1,6 @@
 # Tawsif's home. Imports hold each tool's settings and the font; the dotfiles
 # block below turns tools on.
-{ ... }:
+{ config, ... }:
 {
   imports = [
     ./aerospace.nix
@@ -34,9 +34,16 @@
     MANPAGER = "less -R --use-color -Dd+B -Du+G";
   };
 
-  # Global rules for coding agents, shared by pi and Claude Code.
-  programs.pi-coding-agent.context = ./AGENTS.md;
-  home.file.".claude/CLAUDE.md".source = ./AGENTS.md;
+  # Global rules for coding agents, shared by pi and Claude Code. Linked to
+  # the checkout like the config/ files, so edits apply at once.
+  home.file =
+    let
+      rules = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles.flakeDir}/${config.dotfiles.configDir}/AGENTS.md";
+    in
+    {
+      ".pi/agent/AGENTS.md".source = rules;
+      ".claude/CLAUDE.md".source = rules;
+    };
 
   home.sessionPath = [ "$HOME/.local/bin" ];
 
