@@ -36,6 +36,7 @@
       procs
       trash-cli
       gitleaks
+      tuios # on trial next to herdr
 
       # Containers (docker itself comes with the colima module)
       kubectl
