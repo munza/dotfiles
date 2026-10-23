@@ -31,6 +31,7 @@ Built with [blueprint](https://github.com/numtide/blueprint) for auto-discovery 
 │       ├── ghostty.nix  zed.nix  neovim.nix  aerospace.nix  herdr.nix  colima.nix
 │       ├── yazi.nix  lazygit.nix  btop.nix  clamav.nix
 │       ├── pi.nix             # AI coding agent
+│       ├── skills.nix         # agent skills, refreshed on every switch
 │       ├── secrets-env.nix    # secrets for one Mac — a local env file
 │       ├── secrets-sops.nix   # secrets shared by several Macs — sops in the repo
 │       └── config-links.nix   # links a host's config/ files into ~/.config
@@ -72,6 +73,7 @@ Opt in with `dotfiles.<name>.enable = true`:
 AI coding agents, also opt in:
 
 - **pi** — the Pi coding agent; settings merged into its writable `settings.json`, packages installed on change
+- **skills** — agent skills for pi and Claude Code (`dotfiles.skills`), refreshed from their repos on every switch
 
 On the system side: Nix with flakes and garbage collection, Homebrew installed for you, and Touch ID for `sudo` (inside tmux and herdr too), firewall on, no guest login.
 

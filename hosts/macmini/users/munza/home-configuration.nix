@@ -11,6 +11,7 @@
     ./herdr.nix
     ./neovim.nix
     ./pi.nix
+    ./skills.nix
     ./starship.nix
     ./zed.nix
   ];
