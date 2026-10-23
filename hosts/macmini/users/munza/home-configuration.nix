@@ -10,6 +10,7 @@
     ./ghostty.nix
     ./herdr.nix
     ./neovim.nix
+    ./pi.nix
     ./starship.nix
     ./zed.nix
   ];
@@ -23,6 +24,7 @@
     herdr.enable = true;
     lazygit.enable = true;
     neovim.enable = true;
+    pi.enable = true;
     yazi.enable = true;
     zed.enable = true;
   };

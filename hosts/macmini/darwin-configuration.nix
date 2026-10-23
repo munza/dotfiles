@@ -72,7 +72,6 @@
     ])
     ++ (with perSystem.llm-agents; [
       claude-code
-      pi
     ]);
 
   # Prebuilt binaries for devenv projects and the llm-agents packages.
