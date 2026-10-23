@@ -43,7 +43,7 @@ Built with [blueprint](https://github.com/numtide/blueprint) for auto-discovery 
     └── macmini/               # my Mac Mini (aarch64-darwin)
         ├── darwin-configuration.nix
         ├── users/munza/       # home-manager config, one file per tool
-        └── config/nvim/       # my Neovim config
+        └── config/            # my Neovim config, and AGENTS.md: global rules for pi and Claude Code
 ```
 
 ## What You Get
@@ -190,7 +190,7 @@ The modules are built on [`flake.lib.mkModule`](lib/default.nix), so a new one g
 
 ### Editable Files
 
-Some config is nicer to edit by hand than through Nix. Each host has a `config/` folder next to its other files — Starship's config and the Neovim config live there and are linked into `~/.config`, so you edit them in place, no rebuild. Ghostty also reads `config/ghostty/config` on top of its Nix settings. Zed, Herdr and Colima keep their own settings files writable, with your Nix settings merged in on every rebuild.
+Some config is nicer to edit by hand than through Nix. Each host has a `config/` folder next to its other files — Starship's config and the Neovim config live there and are linked into `~/.config`, so you edit them in place, no rebuild. Ghostty also reads `config/ghostty/config` on top of its Nix settings. Zed, Herdr, Colima and Pi keep their own settings files writable, with your Nix settings merged in on every rebuild.
 
 ### Secrets
 
