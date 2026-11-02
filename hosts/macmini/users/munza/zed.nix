@@ -115,7 +115,7 @@ in
     theme = {
       mode = "system";
       light = "Dayfox - opaque";
-      dark = "Nightfox - opaque";
+      dark = "Terafox - opaque";
     };
     ui_font_family = config.dotfiles.fonts.mono.name;
     ui_font_size = 16;

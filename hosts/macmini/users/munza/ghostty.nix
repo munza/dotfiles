@@ -1,7 +1,7 @@
 # Ghostty look on top of the module's defaults.
 {
   programs.ghostty.settings = {
-    theme = "dark:Nightfox,light:Dayfox";
+    theme = "dark:Terafox,light:Dayfox";
     font-size = 15;
     font-feature = "+calt,+liga,+dlig,+ss01,+ss02,+ss03,+ss04,+ss05";
 

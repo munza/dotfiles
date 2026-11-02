@@ -23,7 +23,7 @@ Built with [blueprint](https://github.com/numtide/blueprint) for auto-discovery 
 │   ├── darwin/
 │   │   ├── default.nix        # entry point a host imports
 │   │   ├── nix.nix            # flakes, garbage collection, store optimisation
-│   │   ├── homebrew.nix       # Homebrew via nix-homebrew; undeclared apps left alone
+│   │   ├── homebrew/          # Homebrew via nix-homebrew; undeclared apps left alone; tap/ for formulae it lacks
 │   │   └── system.nix         # Touch ID for sudo, firewall, no guest login
 │   └── home/                  # one module per tool, shared across hosts
 │       ├── zsh.nix  git.nix  gh.nix  starship.nix  fzf.nix  zoxide.nix  eza.nix

@@ -89,12 +89,14 @@
 
   homebrew = {
     taps = [ "stablyai/orca" ];
+    brews = [ "dotfiles/tap/herdr-core" ];
     casks = [
       "appcleaner"
       "bruno"
       "claude"
       "discord"
       "firefox"
+      "herdr-app"
       "iina"
       "keka"
       "lightcraft"
