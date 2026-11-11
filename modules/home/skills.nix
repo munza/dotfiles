@@ -1,8 +1,8 @@
 # Agent skills, installed with the `skills` CLI (skills.sh) on every switch, so
 # each one is refreshed to the latest from its repo. They land in
 # ~/.agents/skills, which pi and other agents read, and are linked into
-# ~/.claude/skills unless `claude = false`. Skills other tools install (Orca,
-# herdr) are left alone. Removing an entry doesn't uninstall the skill:
+# ~/.claude/skills unless `claude = false`. Skills other tools install (herdr)
+# are left alone. Removing an entry doesn't uninstall the skill:
 #   skills remove -g <name>
 {
   config,

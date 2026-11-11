@@ -1,4 +1,4 @@
-# Agent skills, refreshed on every switch. Orca and herdr manage their own.
+# Agent skills, refreshed on every switch. herdr manages its own.
 {
   dotfiles.skills = [
     {

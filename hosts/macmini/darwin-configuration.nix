@@ -2,7 +2,6 @@
 # see that file for how to make your own.
 {
   flake,
-  inputs,
   perSystem,
   ...
 }:
@@ -88,7 +87,6 @@
   };
 
   homebrew = {
-    taps = [ "stablyai/orca" ];
     brews = [ "dotfiles/tap/herdr-core" ];
     casks = [
       "appcleaner"
@@ -109,7 +107,6 @@
       "protonvpn"
       "raycast"
       "slack"
-      "stablyai/orca/orca"
       "tablepro"
       "tailscale-app"
       "vectorcraft"
@@ -122,10 +119,8 @@
   };
   nix-homebrew = {
     enableRosetta = true;
-    # Taps pinned as flake inputs: updated with `nix flake update`, read-only otherwise.
-    # Keys are GitHub repos (user/homebrew-name), not tap names.
+    # Only taps pinned in nix: the dotfiles tap, and any added as flake inputs.
     mutableTaps = false;
-    taps."stablyai/homebrew-orca" = inputs.homebrew-orca;
   };
 
   # Caps Lock is only ever pressed by accident; Esc is more useful.
