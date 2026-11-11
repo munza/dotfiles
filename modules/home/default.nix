@@ -15,6 +15,7 @@
     flake.homeModules.fzf
     flake.homeModules.gh
     flake.homeModules.ghostty
+    flake.homeModules.glab
     flake.homeModules.git
     flake.homeModules.herdr
     flake.homeModules.lazygit

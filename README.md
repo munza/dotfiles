@@ -26,7 +26,7 @@ Built with [blueprint](https://github.com/numtide/blueprint) for auto-discovery 
 │   │   ├── homebrew/          # Homebrew via nix-homebrew; undeclared apps left alone; tap/ for formulae it lacks
 │   │   └── system.nix         # Touch ID for sudo, firewall, no guest login
 │   └── home/                  # one module per tool, shared across hosts
-│       ├── zsh.nix  git.nix  gh.nix  starship.nix  fzf.nix  zoxide.nix  eza.nix
+│       ├── zsh.nix  git.nix  gh.nix  glab.nix  starship.nix  fzf.nix  zoxide.nix  eza.nix
 │       ├── direnv.nix  nix-index.nix  nh.nix  fonts.nix
 │       ├── ghostty.nix  zed.nix  neovim.nix  aerospace.nix  herdr.nix  colima.nix
 │       ├── yazi.nix  lazygit.nix  btop.nix  clamav.nix
@@ -53,6 +53,7 @@ On by default — turn one off with `dotfiles.<name>.enable = false`:
 - **zsh** — suggestions, highlighting, shared history, history search on ↑/↓
 - **git** — your name and email, common settings and aliases, delta for diffs
 - **gh** — GitHub CLI and git credential helper, with gh-dash
+- **glab** — GitLab CLI
 - **starship** — prompt, from an editable `starship.toml` in the host's `config/`
 - **fzf, zoxide, eza** — fuzzy finding, jumping to directories, a better `ls` (`ll`)
 - **direnv** — per-project environments, cached with nix-direnv
