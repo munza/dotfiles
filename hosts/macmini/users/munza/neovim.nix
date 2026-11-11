@@ -8,11 +8,10 @@
     shellcheck # bashls's diagnostics
     shfmt
 
-    # JavaScript, TypeScript and web formats (JSON, YAML, Markdown, HTML, CSS)
+    # JavaScript, TypeScript and web formats (JSON, YAML, HTML, CSS; prettierd also formats Markdown)
     typescript-language-server
     vscode-langservers-extracted # JSON, HTML, CSS
     yaml-language-server
-    marksman
     prettierd
 
     # TOML (also its formatter)

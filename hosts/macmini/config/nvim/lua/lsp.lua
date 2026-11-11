@@ -11,7 +11,6 @@ vim.lsp.enable({
   "yamlls", -- same (lsp/yamlls.lua)
   "html",
   "cssls",
-  "marksman", -- Markdown links and headings
   "taplo", -- TOML
   "dockerls",
   "basedpyright", -- types
