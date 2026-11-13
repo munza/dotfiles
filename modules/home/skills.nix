@@ -4,10 +4,14 @@
 # ~/.claude/skills unless `claude = false`. Skills other tools install (herdr)
 # are left alone. Removing an entry doesn't uninstall the skill:
 #   skills remove -g <name>
+#
+# Skills written in this repo live in skills/ at its root and are linked into
+# ~/.claude/skills on every host, pointing at the checkout so edits apply at once.
 {
   config,
   lib,
   pkgs,
+  flake,
   ...
 }:
 let
@@ -62,14 +66,24 @@ in
     description = "Agent skills to install, and refresh on every switch.";
   };
 
-  config = lib.mkIf (cfg != [ ]) {
-    # The CLI fetches repos with git; a failed fetch warns instead of failing the
-    # switch. XDG_STATE_HOME keeps its lock file where your shell's `skills` looks.
-    home.activation.agentSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      (
-        export DISABLE_TELEMETRY=1 XDG_STATE_HOME="${config.xdg.stateHome}" PATH="${pkgs.git}/bin:$PATH"
-        ${lib.concatMapStrings install cfg}
-      )
-    '';
-  };
+  config = lib.mkMerge [
+    (lib.mkIf (cfg != [ ]) {
+      # The CLI fetches repos with git; a failed fetch warns instead of failing the
+      # switch. XDG_STATE_HOME keeps its lock file where your shell's `skills` looks.
+      home.activation.agentSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        (
+          export DISABLE_TELEMETRY=1 XDG_STATE_HOME="${config.xdg.stateHome}" PATH="${pkgs.git}/bin:$PATH"
+          ${lib.concatMapStrings install cfg}
+        )
+      '';
+    })
+    {
+      home.file = lib.mapAttrs' (
+        name: _:
+        lib.nameValuePair ".claude/skills/${name}" {
+          source = config.lib.file.mkOutOfStoreSymlink "${config.dotfiles.flakeDir}/skills/${name}";
+        }
+      ) (lib.filterAttrs (_: type: type == "directory") (builtins.readDir "${flake}/skills"));
+    }
+  ];
 }
