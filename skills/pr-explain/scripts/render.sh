@@ -16,29 +16,40 @@ export HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1
 # Check everything cheap before voicing, which can take minutes. build.mjs validates explain.json
 # (walkthrough.style included) and rewrites slides/, so the narration always matches the beats.
 case "${PR_EXPLAIN_STYLE:-draw}" in
-  draw|sans|serif|mono) ;;
-  *) echo "PR_EXPLAIN_STYLE is $PR_EXPLAIN_STYLE; use draw, sans, serif or mono" >&2; exit 1 ;;
+draw | sans | serif | mono) ;;
+*)
+  echo "PR_EXPLAIN_STYLE is $PR_EXPLAIN_STYLE; use draw, sans, serif or mono" >&2
+  exit 1
+  ;;
 esac
 node "$HERE/build.mjs" "$OUT/explain.json"
 
 shopt -s nullglob
 texts=("$OUT"/slides/slide-*.txt)
-[ ${#texts[@]} -gt 0 ] || { echo "no narration in $OUT/slides; run build.mjs first" >&2; exit 1; }
+[ ${#texts[@]} -gt 0 ] || {
+  echo "no narration in $OUT/slides; run build.mjs first" >&2
+  exit 1
+}
 rm -rf "$OUT/video"
 mkdir -p "$OUT/video/assets"
 
 if [ "${PR_EXPLAIN_TTS:-kokoro}" = chatterbox ]; then
   if [ -z "${PR_EXPLAIN_VOICE_REF:-}" ] && [ ! -f "$HERE/voice.wav" ]; then
     voice=$(say -v '?' | sed -E 's/ +[a-z]{2}_[A-Z]{2} +#.*$//' | grep -Fx -m1 -e "Daniel" -e "Reed (English (US))" -e "Alex" || true)
-    [ -n "$voice" ] || { echo "no male macOS voice for the reference; set PR_EXPLAIN_VOICE_REF" >&2; exit 1; }
+    [ -n "$voice" ] || {
+      echo "no male macOS voice for the reference; set PR_EXPLAIN_VOICE_REF" >&2
+      exit 1
+    }
     say -v "$voice" -r 175 -o "$OUT/video/ref.wav" --data-format=LEI16@24000 \
       "Alright, let me walk you through this one. It's a small change, but it fixes something that bugs a lot of people. So here's the problem, and here's how we solved it."
     export PR_EXPLAIN_VOICE_REF="$OUT/video/ref.wav"
   fi
   # setuptools<81: Chatterbox's watermarker still imports pkg_resources.
-  (cd "$HOME/.cache/pr-explain" 2>/dev/null || cd /tmp
-   uv run --quiet --python 3.11 --with chatterbox-tts==0.1.7 --with "setuptools<81" \
-     python "$HERE/tts.py" "$OUT/video/assets" "${texts[@]}" 2>&1 | grep -E "^  audio-|Error|error" || true)
+  (
+    cd "$HOME/.cache/pr-explain" 2>/dev/null || cd /tmp
+    uv run --quiet --python 3.11 --with chatterbox-tts==0.1.7 --with "setuptools<81" \
+      python "$HERE/tts.py" "$OUT/video/assets" "${texts[@]}" 2>&1 | grep -E "^  audio-|Error|error" || true
+  )
 else
   # Checks the imports, not just the venv, so a half-finished install is retried.
   "$VENV/bin/python" -c 'import kokoro_onnx, soundfile' 2>/dev/null || {
@@ -50,7 +61,10 @@ else
     HYPERFRAMES_PYTHON="$VENV/bin/python" npx --yes "$HYPERFRAMES" tts "Hello." -o "$OUT/video/warmup.wav" >/dev/null
   "$VENV/bin/python" -I "$HERE/tts_kokoro.py" "$OUT/video/assets" "${texts[@]}"
 fi
-[ -f "$OUT/video/assets/durations.json" ] || { echo "voicing failed" >&2; exit 1; }
+[ -f "$OUT/video/assets/durations.json" ] || {
+  echo "voicing failed" >&2
+  exit 1
+}
 
 node "$HERE/video.mjs" "$OUT"
 cd "$OUT/video"

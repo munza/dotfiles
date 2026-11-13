@@ -1,5 +1,10 @@
 # Zed with vim mode and a space leader, on top of the module's defaults.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   # q closes a panel while you're in it.
   closeWithQ = context: action: {
