@@ -1,0 +1,45 @@
+{
+  "rules": [
+    "Pick each walkthrough node's kind from `kinds` by what the part is; its `use` says when it fits. The kind sets the shape, size, colour, border and icon, so two PRs read alike.",
+    "Anything that runs or stores data is a rounded rectangle, and its icon says what it is. Other shapes appear only where the shape itself has a meaning: a decision diamond, a queue pill, an external cloud, a start or end pill, an input or output parallelogram, an error box.",
+    "Colour is the layer: blue for clients and people, violet for the edge, black on white for the repo's own services, green for data, orange for async work, light blue for events, yellow for decisions, grey for things outside the repo.",
+    "Red is reserved for what goes wrong: the error kind, and the strike action. A box that fails keeps its own colour and gets struck or tagged.",
+    "Border is ownership: solid for the repo's own parts, dashed for external ones, dotted for data that doesn't last (caches).",
+    "New, changed and removed show through the tag, strike and highlight actions, never through colour.",
+    "A node's tone overrides its kind's colour; leave it out unless the story needs it. \"size\": \"l\" makes the one box the story centres on bigger."
+  ],
+  "colors": {
+    "black": ["#1d1d1d", "#ffffff"],
+    "grey": ["#8a939c", "#f1f3f5"],
+    "blue": ["#4465e9", "#e4e9fd"],
+    "light-blue": ["#4ba1f1", "#ddedfa"],
+    "violet": ["#ae3ec9", "#f2e3f7"],
+    "green": ["#099268", "#dcf0e8"],
+    "yellow": ["#e5a13a", "#fdf2dc"],
+    "orange": ["#e16919", "#fbe6d8"],
+    "red": ["#e03131", "#fbe4e4"]
+  },
+  "shapes": ["rectangle", "hexagon", "diamond", "pill", "cloud", "parallelogram", "x-box"],
+  "borders": ["solid", "dashed", "dotted"],
+  "icons": ["device", "person", "shield", "server", "gear", "database", "bolt", "file", "queue"],
+  "sizes": { "l": 1.25 },
+  "kinds": {
+    "client": { "use": "a browser, app or CLI that sends the first request", "shape": "rectangle", "size": [240, 176], "color": "blue", "border": "solid", "icon": "device" },
+    "user": { "use": "a person using the product", "shape": "rectangle", "size": [240, 176], "color": "blue", "border": "solid", "icon": "person" },
+    "gateway": { "use": "a load balancer, proxy, CDN edge or API gateway that requests pass through", "shape": "hexagon", "size": [260, 200], "color": "violet", "border": "solid", "icon": "shield" },
+    "service": { "use": "an API, server or backend service the repo runs", "shape": "rectangle", "size": [240, 176], "color": "black", "border": "solid", "icon": "server" },
+    "worker": { "use": "a background job, cron task or queue consumer", "shape": "rectangle", "size": [240, 176], "color": "orange", "border": "solid", "icon": "gear" },
+    "db": { "use": "a database", "shape": "rectangle", "size": [240, 176], "color": "green", "border": "solid", "icon": "database" },
+    "cache": { "use": "a cache: in memory, Redis, CDN or edge", "shape": "rectangle", "size": [240, 176], "color": "green", "border": "dotted", "icon": "bolt" },
+    "storage": { "use": "files, a bucket or config on disk", "shape": "rectangle", "size": [240, 176], "color": "green", "border": "solid", "icon": "file" },
+    "queue": { "use": "a queue, topic or stream that holds messages", "shape": "pill", "size": [340, 150], "color": "orange", "border": "solid", "icon": "queue" },
+    "decision": { "use": "a check that sends the flow one of two ways; the label is the question and the sends out of it are labelled", "shape": "diamond", "size": [300, 210], "color": "yellow", "border": "solid" },
+    "external": { "use": "a third-party service or anything outside the repo: GitHub, Stripe, the OS", "shape": "cloud", "size": [290, 190], "color": "grey", "border": "dashed" },
+    "event": { "use": "an event, input or output: a webhook, a message, a file arriving", "shape": "parallelogram", "size": [270, 130], "color": "light-blue", "border": "solid" },
+    "start": { "use": "where the flow starts or ends", "shape": "pill", "size": [220, 100], "color": "grey", "border": "solid" },
+    "module": { "use": "a function, class or file inside a service, for detail views", "shape": "rectangle", "size": [210, 110], "color": "black", "fill": "none", "border": "solid" },
+    "error": { "use": "a failure: an exception, a 500, a crash", "shape": "x-box", "size": [230, 140], "color": "red", "border": "solid" },
+    "box": { "use": "any other part, when nothing above fits", "shape": "rectangle", "size": [240, 130], "color": "black", "border": "solid" }
+  },
+  "aliases": { "device": "client", "person": "user", "server": "service", "store": "db" }
+}

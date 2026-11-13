@@ -40,9 +40,13 @@ if (flow) {
 }
 const style = data.walkthrough?.style;
 if (style && !["draw", "sans", "serif", "mono"].includes(style)) problems.push(`walkthrough.style is ${style}; use draw, sans, serif or mono`);
-const TONES = ["blue", "violet", "green", "red", "yellow", "grey", "black"];
+// components.json holds the kinds, colours and sizes video.mjs draws.
+const rules = JSON.parse(fs.readFileSync(path.join(here, "..", "components.json"), "utf8"));
+const KINDS = [...Object.keys(rules.kinds), ...Object.keys(rules.aliases), "code", "note", "text"];
 (data.walkthrough?.nodes ?? []).forEach((n, i) => {
-  if (n.tone && !TONES.includes(n.tone)) problems.push(`walkthrough.nodes[${i}].tone is ${n.tone}`);
+  if (n.kind && !KINDS.includes(n.kind)) problems.push(`walkthrough.nodes[${i}].kind is ${n.kind}; use one of ${KINDS.join(", ")}`);
+  if (n.tone && !rules.colors[n.tone]) problems.push(`walkthrough.nodes[${i}].tone is ${n.tone}; use one of ${Object.keys(rules.colors).join(", ")}`);
+  if (n.size && !rules.sizes[n.size]) problems.push(`walkthrough.nodes[${i}].size is ${n.size}; use ${Object.keys(rules.sizes).join(", ")} or leave it out`);
 });
 const wtNodes = data.walkthrough?.nodes ?? [], wtFrames = data.walkthrough?.frames ?? [];
 const nodeIds = new Set(wtNodes.map((n) => n.id)), frameIds = new Set(wtFrames.map((f) => f.id));
@@ -79,8 +83,7 @@ if (problems.length) {
 
 // JSON inside <script> must not be able to close the tag, whatever the PR's text says.
 const json = (value) => JSON.stringify(value).replace(/</g, "\\u003c");
-const diagram = template("diagram.js");
-const fill = (html, marker, value) => html.replace("/*DIAGRAM_JS*/", () => diagram).replace(marker, () => json(value));
+const fill = (html, marker, value) => html.replace(marker, () => json(value));
 
 fs.writeFileSync(path.join(out, "index.html"), fill(template("report.html"), "/*DATA*/null", data));
 

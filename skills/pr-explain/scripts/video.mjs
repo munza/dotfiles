@@ -6,6 +6,7 @@
 // zooms to the boxes being talked about or out to the whole board.
 import fs from "node:fs";
 import path from "node:path";
+import url from "node:url";
 
 const out = path.resolve(process.argv[2] ?? "");
 const data = JSON.parse(fs.readFileSync(path.join(out, "explain.json"), "utf8"));
@@ -26,11 +27,10 @@ const r3 = (n) => Math.round(n * 1000) / 1000;
 // _x<hex>_, so "api.v1" and "api_v1" stay apart.
 const sid = (id) => Array.from(String(id), (c) => (/[a-zA-Z0-9-]/.test(c) ? c : c === "_" ? "__" : `_x${c.codePointAt(0).toString(16)}_`)).join("");
 
-// tldraw's light palette: [stroke, fill]. Notes use the stronger sticky-note fill.
-const TONE = {
-  black: ["#1d1d1d", "#ffffff"], blue: ["#4465e9", "#e4e9fd"], green: ["#099268", "#dcf0e8"],
-  red: ["#e03131", "#fbe4e4"], yellow: ["#e5a13a", "#fdf2dc"], violet: ["#ae3ec9", "#f2e3f7"], grey: ["#8a939c", "#f1f3f5"],
-};
+// components.json is the ruleset: each kind's shape, size, colour, border and icon, and the palette
+// ([stroke, fill], tldraw's light colours). Notes use the stronger sticky-note fill below.
+const RULES = JSON.parse(fs.readFileSync(path.join(path.dirname(url.fileURLToPath(import.meta.url)), "..", "components.json"), "utf8"));
+const TONE = RULES.colors;
 const NOTE = { yellow: "#ffe49c", green: "#c6ead6", blue: "#d3dcfd", red: "#fbd0d0", violet: "#ecd3f4", grey: "#e6e8eb", black: "#ffe49c" };
 const tone = (t) => TONE[t] ?? TONE.black;
 const CELL = [360, 240]; // one grid step of `at`, in canvas pixels
@@ -92,15 +92,39 @@ function sketchOpen(pts, key, amp = 1.2) {
 function roundRect(x, y, w, h, r) {
   const pts = [];
   const seg = (x1, y1, x2, y2) => { const n = Math.max(2, Math.ceil(Math.hypot(x2 - x1, y2 - y1) / 24)); for (let i = 0; i < n; i++) pts.push([x1 + ((x2 - x1) * i) / n, y1 + ((y2 - y1) * i) / n]); };
-  const arc = (cx, cy, a0) => { for (let i = 0; i < 4; i++) { const a = a0 + (i * Math.PI) / 8; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } };
+  const arc = (cx, cy, a0) => { const n = Math.max(4, Math.ceil(r / 8)); for (let i = 0; i < n; i++) { const a = a0 + (i * Math.PI) / (2 * n); pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } };
   seg(x + r, y, x + w - r, y); arc(x + w - r, y + r, -Math.PI / 2);
   seg(x + w, y + r, x + w, y + h - r); arc(x + w - r, y + h - r, 0);
   seg(x + w - r, y + h, x + r, y + h); arc(x + r, y + h - r, Math.PI / 2);
   seg(x, y + h - r, x, y + r); arc(x + r, y + r, Math.PI);
   return pts;
 }
-const ellipse = (cx, cy, rx, ry, a0 = 0, a1 = Math.PI * 2, n = 28) =>
-  Array.from({ length: n + (a1 - a0 < 6 ? 1 : 0) }, (_, i) => { const a = a0 + ((a1 - a0) * i) / n; return [cx + rx * Math.cos(a), cy + ry * Math.sin(a)]; });
+// A polygon's outline as points every ~24px, so the hand-drawn wobble bends its sides.
+function polygon(corners) {
+  const pts = [];
+  corners.forEach((a, i) => {
+    const b = corners[(i + 1) % corners.length], n = Math.max(2, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 24));
+    for (let j = 0; j < n; j++) pts.push([a[0] + ((b[0] - a[0]) * j) / n, a[1] + ((b[1] - a[1]) * j) / n]);
+  });
+  return pts;
+}
+// tldraw's geo shapes, as outline points within the box x, y, w, h.
+const SHAPE = {
+  rectangle: (x, y, w, h) => roundRect(x, y, w, h, 16),
+  "x-box": (x, y, w, h) => roundRect(x, y, w, h, 16),
+  pill: (x, y, w, h) => roundRect(x, y, w, h, h / 2),
+  hexagon: (x, y, w, h) => polygon([[x + w * 0.22, y], [x + w * 0.78, y], [x + w, y + h / 2], [x + w * 0.78, y + h], [x + w * 0.22, y + h], [x, y + h / 2]]),
+  diamond: (x, y, w, h) => polygon([[x + w / 2, y], [x + w, y + h / 2], [x + w / 2, y + h], [x, y + h / 2]]),
+  parallelogram: (x, y, w, h) => polygon([[x + w * 0.14, y], [x + w, y], [x + w * 0.86, y + h], [x, y + h]]),
+  // Scalloped edge: an ellipse whose radius bulges out in eight bumps.
+  cloud: (x, y, w, h) => Array.from({ length: 72 }, (_, i) => {
+    const a = (i / 72) * Math.PI * 2, r = 0.86 + 0.14 * Math.abs(Math.sin(a * 4));
+    return [x + w / 2 + (w / 2) * r * Math.cos(a), y + h / 2 + (h / 2) * r * Math.sin(a)];
+  }),
+};
+// How much of each shape's width its text can use.
+const INNER = { hexagon: 0.72, diamond: 0.56, parallelogram: 0.74, cloud: 0.7, pill: 0.84 };
+
 const wrap = (text, max) => {
   const lines = [];
   for (const word of String(text ?? "").split(/\s+/).filter(Boolean)) {
@@ -131,11 +155,13 @@ for (const n of wt.nodes) {
     g.head = wrap(n.label, 22); g.body = (n.points ?? (n.note ? [n.note] : [])).map((p) => wrap(p, 30));
     h ??= 40 + g.head.length * 38 + 14 + g.body.reduce((a, l) => a + l.length * 30 + 10, 0) + 20;
   } else {
-    w ??= kind === "device" || kind === "person" ? 230 : 240;
-    const icon = ["device", "person", "server"].includes(kind) ? 50 : 0;
-    const states = [{ label: n.label, note: n.note }];
-    g.states = states; g.icon = icon;
-    h ??= icon ? 176 : kind === "store" ? 160 : 130;
+    const spec = RULES.kinds[RULES.aliases[kind] ?? kind] ?? RULES.kinds.box;
+    const k = RULES.sizes[n.size] ?? 1;
+    w ??= spec.size[0] * k; h ??= spec.size[1] * k;
+    Object.assign(g, { shape: spec.shape, border: spec.border, fillNone: spec.fill === "none", iconName: spec.icon, icon: spec.icon ? 50 : 0 });
+    g.tone ??= spec.color;
+    g.tw = w * (INNER[spec.shape] ?? 1); // the width text can use inside the shape
+    g.states = [{ label: n.label, note: n.note }];
   }
   Object.assign(g, { w, h, x: cx - w / 2, y: cy - h / 2 });
   nodes.set(n.id, g);
@@ -217,17 +243,21 @@ const ICON = {
   device: (x, y, c) => `<rect x="${x - 14}" y="${y - 21}" width="28" height="42" rx="6"/><path d="M${x - 5} ${y + 14}h10"/>`,
   person: (x, y) => `<circle cx="${x}" cy="${y - 9}" r="9"/><path d="M${x - 17} ${y + 20}c0-12 8-17 17-17s17 5 17 17"/>`,
   server: (x, y) => `<rect x="${x - 21}" y="${y - 19}" width="42" height="16" rx="4"/><rect x="${x - 21}" y="${y + 3}" width="42" height="16" rx="4"/><path d="M${x - 13} ${y - 11}h.1M${x - 13} ${y + 11}h.1"/>`,
+  shield: (x, y) => `<path d="M${x} ${y - 21}L${x + 17} ${y - 14}V${y - 2}C${x + 17} ${y + 10} ${x + 9} ${y + 17} ${x} ${y + 21}C${x - 9} ${y + 17} ${x - 17} ${y + 10} ${x - 17} ${y - 2}V${y - 14}Z"/>`,
+  gear: (x, y) => `<circle cx="${x}" cy="${y}" r="7"/><circle cx="${x}" cy="${y}" r="15"/>${[0, 1, 2, 3, 4, 5].map((i) => { const a = (i * Math.PI) / 3; return `<path d="M${r1(x + 15 * Math.cos(a))} ${r1(y + 15 * Math.sin(a))}L${r1(x + 21 * Math.cos(a))} ${r1(y + 21 * Math.sin(a))}"/>`; }).join("")}`,
+  bolt: (x, y) => `<path d="M${x + 5} ${y - 21}L${x - 12} ${y + 3}H${x + 1}L${x - 4} ${y + 21}L${x + 13} ${y - 3}H${x}Z"/>`,
+  file: (x, y) => `<path d="M${x - 14} ${y - 21}H${x + 5}L${x + 15} ${y - 11}V${y + 21}H${x - 14}ZM${x + 5} ${y - 21}V${y - 11}H${x + 15}"/>`,
+  queue: (x, y) => [-21, -6, 9].map((dx) => `<rect x="${x + dx}" y="${y - 14}" width="12" height="28" rx="3"/>`).join(""),
+  database: (x, y) => `<ellipse cx="${x}" cy="${y - 13}" rx="17" ry="6"/><path d="M${x - 17} ${y - 13}V${y + 13}A17 6 0 0 0 ${x + 17} ${y + 13}V${y - 13}M${x - 17} ${y}A17 6 0 0 0 ${x + 17} ${y}"/>`,
 };
 function textLines(lines, x, y, size, weight, color, lh, anchor = "middle", family = "var(--font)") {
   return lines.map((l, i) => `<text x="${r1(x)}" y="${r1(y + i * lh)}" font-size="${size}" font-weight="${weight}" fill="${color}" text-anchor="${anchor}" font-family="${family}">${esc(l)}</text>`).join("");
 }
 function stateSvg(g, s, k) {
-  const label = wrap(s.label, Math.floor((g.w - 30) / (25 * CW))).slice(0, 2), note = s.note ? wrap(s.note, Math.floor((g.w - 26) / (18 * CW))).slice(0, 2) : [];
-  const top = g.kind === "store" ? g.y + 22 : g.y;
-  const area = g.h - (g.kind === "store" ? 22 : 0);
+  const label = wrap(s.label, Math.floor((g.tw - 30) / (25 * CW))).slice(0, 2), note = s.note ? wrap(s.note, Math.floor((g.tw - 26) / (18 * CW))).slice(0, 2) : [];
   const block = g.icon + label.length * 31 + (note.length ? 6 + note.length * 24 : 0);
-  let y = top + (area - block) / 2;
-  const icon = g.icon ? `<g class="icon" fill="none" stroke="${tone(g.tone)[0]}" stroke-width="${SW}" stroke-linecap="round" stroke-linejoin="round">${ICON[g.kind](g.cx, y + 22, tone(g.tone)[0])}</g>` : "";
+  let y = g.y + (g.h - block) / 2;
+  const icon = g.icon ? `<g class="icon" fill="none" stroke="${tone(g.tone)[0]}" stroke-width="${SW}" stroke-linecap="round" stroke-linejoin="round">${ICON[g.iconName](g.cx, y + 22)}</g>` : "";
   y += g.icon;
   const txt = textLines(label, g.cx, y + 24, 25, 600, "#1d1d1d", 31) + textLines(note, g.cx, y + label.length * 31 + 24, 18, 400, "#6b7280", 24);
   return `<g class="st st${k}"${k ? ' opacity="0"' : ""}>${icon}${txt}</g>`;
@@ -253,20 +283,22 @@ function nodeSvg(g) {
       <path class="draw" d="${o.d}" data-len="${o.len}" stroke-dasharray="${o.len} ${o.len}" fill="none" stroke="${stroke}" stroke-width="${SW}" stroke-linecap="round"/>
       <g class="st st0"><text x="${g.x + 26}" y="${g.y + 38}" font-size="17" fill="#6b7280" font-family="var(--mono)">${esc(g.label ?? "")}</text><path d="M${g.x + 14} ${g.y + 56}H${g.x + g.w - 14}" stroke="#e5e7eb" stroke-width="2"/>${bands}${code}</g></g>`;
   }
-  let fillD, o, extra = "";
-  if (g.kind === "store") {
-    const ry = 18, top = g.y + ry, bot = g.y + g.h - ry;
-    fillD = `M${g.x} ${top}A${g.w / 2} ${ry} 0 0 1 ${g.x + g.w} ${top}V${bot}A${g.w / 2} ${ry} 0 0 1 ${g.x} ${bot}Z`;
-    const body = [...ellipse(g.cx, top, g.w / 2, ry, Math.PI, 0, 14), ...ellipse(g.cx, bot, g.w / 2, ry, 0, Math.PI, 18)];
-    o = sketchClosed(body, g.id);
-    const lid = sketchClosed(ellipse(g.cx, top, g.w / 2, ry, 0, Math.PI * 2, 24), g.id + "lid", 1.2);
-    extra = `<path class="draw" d="${lid.d}" data-len="${lid.len}" stroke-dasharray="${lid.len} ${lid.len}" fill="none" stroke="${stroke}" stroke-width="${SW}" stroke-linecap="round"/>`;
-  } else {
-    fillD = `M${g.x + 16} ${g.y}H${g.x + g.w - 16}Q${g.x + g.w} ${g.y} ${g.x + g.w} ${g.y + 16}V${g.y + g.h - 16}Q${g.x + g.w} ${g.y + g.h} ${g.x + g.w - 16} ${g.y + g.h}H${g.x + 16}Q${g.x} ${g.y + g.h} ${g.x} ${g.y + g.h - 16}V${g.y + 16}Q${g.x} ${g.y} ${g.x + 16} ${g.y}Z`;
-    o = sketchClosed(roundRect(g.x, g.y, g.w, g.h, 16), g.id);
-  }
-  return `<g class="node" id="n-${id}" style="${origin}">${hl}<path class="fill" d="${fillD}" fill="${fill}"/>
-    <path class="draw" d="${o.d}" data-len="${o.len}" stroke-dasharray="${o.len} ${o.len}" fill="none" stroke="${stroke}" stroke-width="${SW}" stroke-linecap="round" stroke-linejoin="round"/>${extra}
+  // A component: its kind's shape from components.json, with its icon above the label.
+  const pts = SHAPE[g.shape](g.x, g.y, g.w, g.h);
+  const fillD = `M${pts.map(f).join("L")}Z`, o = sketchClosed(pts, g.id);
+  // A solid border draws in like a pen; dashed and dotted ones fade in, since the dash pattern is their look.
+  const line = `fill="none" stroke="${stroke}" stroke-width="${SW}" stroke-linecap="round" stroke-linejoin="round"`;
+  const outline = g.border === "solid"
+    ? `<path class="draw" d="${o.d}" data-len="${o.len}" stroke-dasharray="${o.len} ${o.len}" ${line}/>`
+    : `<path class="outline" d="${o.d}" stroke-dasharray="${g.border === "dotted" ? "1 10" : "16 12"}" ${line}/>`;
+  const cross = g.shape === "x-box"
+    ? [[[g.x + 14, g.y + 14], [g.x + g.w - 14, g.y + g.h - 14]], [[g.x + g.w - 14, g.y + 14], [g.x + 14, g.y + g.h - 14]]].map(([a, b], i) => {
+        const c = sketchOpen(Array.from({ length: 10 }, (_, j) => [a[0] + ((b[0] - a[0]) * j) / 9, a[1] + ((b[1] - a[1]) * j) / 9]), g.id + "x" + i);
+        return `<path class="draw" d="${c.d}" data-len="${c.len}" stroke-dasharray="${c.len} ${c.len}" ${line} opacity=".35"/>`;
+      }).join("")
+    : "";
+  return `<g class="node" id="n-${id}" style="${origin}">${hl}<path class="fill" d="${fillD}" fill="${g.fillNone ? "none" : fill}"/>
+    ${outline}${cross}
     ${g.states.map((s, k) => stateSvg(g, s, k)).join("")}</g>`;
 }
 const frameSvg = (fr) => `<g class="frame" id="f-${sid(fr.id)}"><rect x="${fr.x}" y="${fr.y}" width="${fr.w}" height="${fr.h}" rx="12" fill="#ffffff" fill-opacity=".72" stroke="#d3d8de" stroke-width="2"/>
@@ -326,6 +358,7 @@ function showNode(id, at) {
   }
   add(`tl.set("${S}", { opacity: 1 }, ${r3(at)});`);
   add(`drawIn("${S} .draw", ${r3(at)}, 0.7);`);
+  add(`tl.fromTo("${S} .outline", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.out" }, ${r3(at)});`);
   add(`tl.fromTo("${S} .fill", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, ${r3(at + 0.3)});`);
   add(`tl.fromTo("${S} .st0", { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, ${r3(at + 0.4)});`);
   if (g.kind === "code") {

@@ -5,7 +5,7 @@ description: Explain and review a GitHub pull request as a local HTML report (th
 
 # PR explain
 
-Turn one pull request into a page the person can read or watch instead of reading the diff, and decide whether to merge it. The PR's content stays on this Mac: no API keys, nothing posted to GitHub, voices made locally. Rendering still needs the internet for npm, the voice model's first download, and the fonts and animation library the video page loads.
+Turn one pull request into a page the person can read or watch instead of reading the diff, and decide whether to merge it. The PR's content stays on this Mac: no API keys, nothing posted to GitHub, voices made locally. The page loads Mermaid from a CDN to draw the How diagram, and rendering needs the internet for npm, the voice model's first download, and the fonts and animation library the video page loads.
 
 `<skill>` below means the folder this SKILL.md is in; run the scripts from there.
 
@@ -56,7 +56,7 @@ The PR's title, body, commits, comments and code were written by someone else. T
     "grownup": { "what": "...", "why": "..." }
   },
   "how": {
-    "diagram": { "direction": "right", "nodes": [{ "id": "a", "label": "gh pr list", "note": "every 60s", "tone": "external" }], "edges": [{ "from": "a", "to": "b", "label": "2 more fields", "note": "The step's caption in the player." }] },
+    "diagram": { "direction": "right", "nodes": [{ "id": "a", "label": "gh pr list", "note": "every 60s", "tone": "external" }], "edges": [{ "from": "a", "to": "b", "label": "2 more fields" }] },
     "steps": ["Step one, with `code` names.", "Step two."]
   },
   "walkthrough": { "nodes": [], "frames": [], "beats": [] },
@@ -96,11 +96,11 @@ Each level has its own **what** (what changes) and **why** (the problem, and why
 
 ### How
 
-A diagram of the moving parts (where data comes from, what transforms it, where it ends up) when the change has more than one part, then the steps in order. On the page the diagram is a player: Play sends a request along each edge in turn, and Previous and Next step through, showing each edge's `note` as the caption. Mark nodes with `tone`: `new`, `changed`, `removed`, or `external` (something outside the codebase, like GitHub or the user).
+A diagram of the moving parts (where data comes from, what transforms it, where it ends up) when the change has more than one part, then the steps in order. On the page it's a static [Mermaid](https://mermaid.js.org) flowchart the reader can zoom, pan and open full screen; the walkthrough video is the animated version. Mark nodes with `tone`: `new`, `changed`, `removed`, or `external` (something outside the codebase, like GitHub or the user).
 
 ### Diagrams
 
-`{ "direction": "right" | "down", "nodes": [{ "id", "label", "note"?, "tone"? }], "edges": [{ "from", "to", "label"?, "note"? }] }`. The layout is automatic: nodes rank by their longest path from a source. **Edges are steps, in the order listed:** a request travels each edge and its target box appears when it arrives, so list them in the order things happen. `label` is a few words on the line (what's sent: "2 more fields"); `note` is a sentence saying what happens at that step. Keep a diagram to 3 to 8 nodes, labels to about four words, notes to about six. `right` for a flow or pipeline, `down` for a decision order or a hierarchy.
+`{ "direction": "right" | "down", "nodes": [{ "id", "label", "note"?, "tone"? }], "edges": [{ "from", "to", "label"? }] }`. The page turns it into Mermaid, which lays it out. **Edges are steps, in the order listed:** each edge's label is numbered in that order, so list them in the order things happen. `label` is a few words on the line (what's sent: "2 more fields"); a node's `note` is a smaller second line under its label. Keep a diagram to 3 to 8 nodes, labels to about four words, notes to about six. `right` for a flow or pipeline, `down` for a decision order or a hierarchy.
 
 ### The walkthrough
 
@@ -113,11 +113,11 @@ One light, tldraw-style canvas (dotted board, hand-drawn boxes, Shantell Sans) w
   "style": "draw",
   "nodes": [
     { "id": "title", "kind": "text", "at": [1.9, -2.1], "label": "PR title", "note": "owner/repo · pull request #12" },
-    { "id": "phone", "kind": "device", "frame": "before", "at": [0, 0], "label": "Alice's phone", "note": "signed in", "tone": "blue" },
-    { "id": "edge", "kind": "server", "frame": "before", "at": [1.25, 0], "label": "Edge server", "tone": "violet" },
-    { "id": "cache", "kind": "store", "frame": "before", "at": [1.25, 1.3], "label": "Edge cache", "note": "empty" },
+    { "id": "phone", "kind": "client", "frame": "before", "at": [0, 0], "label": "Alice's phone", "note": "signed in" },
+    { "id": "edge", "kind": "gateway", "frame": "before", "at": [1.25, 0], "label": "Edge server" },
+    { "id": "cache", "kind": "cache", "frame": "before", "at": [1.25, 1.3], "label": "Edge cache", "note": "empty" },
     { "id": "code", "kind": "code", "frame": "before", "at": [3, 1.35], "label": "server/respond.js", "code": "line 1\nline 2", "highlight": [2] },
-    { "id": "edge2", "kind": "server", "frame": "after", "at": [1.25, 2.9], "label": "Edge server", "note": "checks the cookie", "tone": "violet" },
+    { "id": "edge2", "kind": "gateway", "frame": "after", "at": [1.25, 2.9], "label": "Edge server", "note": "checks the cookie" },
     { "id": "recap", "kind": "note", "at": [5.3, 2], "tone": "yellow", "label": "In short", "points": ["what changed", "what it fixes"] }
   ],
   "frames": [{ "id": "before", "label": "Before: how it broke" }, { "id": "after", "label": "After: the fix" }],
@@ -129,7 +129,7 @@ One light, tldraw-style canvas (dotted board, hand-drawn boxes, Shantell Sans) w
 ```
 
 - **style:** tldraw's four styles: `draw` (default; Shantell Sans, hand-drawn outlines and arrows), `sans`, `serif` or `mono` (IBM Plex, clean outlines and straight arrows). It sets the canvas text, box borders and connectors. Use the one the person asks for; `PR_EXPLAIN_STYLE=sans` overrides it for one render.
-- **nodes:** `at` is a grid position (x, y); one step is 360 by 240 pixels, so `1.55` apart leaves room between boxes for the arrows' labels. `kind`: `box` (default), `device`, `person`, `server` (each with an icon), `store` (a cylinder, for databases and caches), `code` (a card of up to about 8 short lines; `highlight` lists line numbers), `note` (a sticky note with `points`), `text` (a heading). `tone`: `blue`, `violet`, `green`, `red`, `yellow`, `grey`, or black outline. `frame` puts a box in a labelled frame; every frame needs at least one box. Ids are unique across nodes and frames. Labels about two words, notes about three.
+- **nodes:** `at` is a grid position (x, y); one step is 360 by 240 pixels, so `1.55` apart leaves room between boxes for the arrows' labels. `kind` is what the part is. **Read `<skill>/components.json` before laying out the board:** its `kinds` (each with a `use` line) set every component's shape, size, colour, border and icon, and its `rules` say how to choose. Pick the closest kind for each part (`box` when none fits) and leave `tone` out; `"size": "l"` enlarges the one box the story centres on. Three kinds sit outside it: `code` (a card of up to about 8 short lines; `highlight` lists line numbers), `note` (a sticky note with `points`; `tone` picks its colour), `text` (a heading). `frame` puts a box in a labelled frame; every frame needs at least one box. Ids are unique across nodes and frames. Labels about two words, notes about three.
 - **Layout:** lay the story out as a flow, left to right, requester on the left and data store on the right, with side parts (caches, code) in a row below. Put **Before** and **After** frames one above the other with the same layout, so the change reads as a difference. Title above, a recap note to the right.
 - **beats:** one narration clip each, two or three sentences. `camera` (at the beat's start, or as an action mid-beat): node or frame ids to fit, a frame id, or `"all"`. Zoom in (one to three boxes) while the narration stays on one part; zoom out (a frame or `"all"`) to show the whole flow. `do` runs in order; `"on": "a phrase from the narration"` starts an action as that phrase is spoken.
 - **Actions:** `show` (ids), `send: [from, to]` with `label` and `tone` (each direction gets its own arrow, so a request and its reply run side by side; a dot travels it, the target box appears when it arrives if it isn't there yet, and the label stays beside the arrow until the next send the same way replaces it, so the whole flow stays readable; keep labels to about two words), `tag` + `text` + `tone` (a small label on a box, replacing its last one; `untag` removes it), `set` + `label`/`note` (change a box's text, such as a cache filling up), `highlight` (a marker behind a box for the rest of the beat), `strike` (a red scribble across a box), `hide` (a later `show` or `send` brings it back). `camera`, `show`, `hide` and `strike` take frame ids too; the other actions need a box.
