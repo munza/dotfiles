@@ -44,16 +44,33 @@ const TONES = ["blue", "violet", "green", "red", "yellow", "grey", "black"];
 (data.walkthrough?.nodes ?? []).forEach((n, i) => {
   if (n.tone && !TONES.includes(n.tone)) problems.push(`walkthrough.nodes[${i}].tone is ${n.tone}`);
 });
-const ids = new Set([...(data.walkthrough?.nodes ?? []).map((n) => n.id), ...(data.walkthrough?.frames ?? []).map((f) => f.id)]);
-(data.walkthrough?.nodes ?? []).forEach((n, i) => {
+const wtNodes = data.walkthrough?.nodes ?? [], wtFrames = data.walkthrough?.frames ?? [];
+const nodeIds = new Set(wtNodes.map((n) => n.id)), frameIds = new Set(wtFrames.map((f) => f.id));
+// video.mjs turns each id into a DOM id with sid(); it's injective, but two boxes still can't share an id.
+const seen = new Set();
+for (const id of [...wtNodes.map((n) => n.id), ...wtFrames.map((f) => f.id)]) {
+  if (id == null || id === "") problems.push("walkthrough has a node or frame with no id");
+  else if (seen.has(id)) problems.push(`walkthrough has two nodes or frames with id ${id}`);
+  seen.add(id);
+}
+wtNodes.forEach((n, i) => {
   if (!Array.isArray(n.at)) problems.push(`walkthrough.nodes[${i}] (${n.id}) has no at: [x, y]`);
-  if (n.frame && !ids.has(n.frame)) problems.push(`walkthrough.nodes[${i}] is in frame ${n.frame}, which isn't in frames`);
+  if (n.frame && !frameIds.has(n.frame)) problems.push(`walkthrough.nodes[${i}] is in frame ${n.frame}, which isn't in frames`);
+});
+wtFrames.forEach((fr, i) => {
+  if (!wtNodes.some((n) => n.frame === fr.id)) problems.push(`walkthrough.frames[${i}] (${fr.id}) has no nodes; give a node "frame": "${fr.id}" or drop the frame`);
 });
 if (!data.walkthrough?.beats?.length) problems.push("walkthrough has no beats");
+// camera, show, hide and strike take frames too; the other actions need a box.
+const ANY = ["camera", "show", "hide", "strike"], BOX = ["send", "tag", "untag", "set", "highlight"];
 (data.walkthrough?.beats ?? []).forEach((b, i) => {
   if (!b.narration?.trim()) problems.push(`walkthrough.beats[${i}] has no narration`);
-  const refs = [b.camera, ...(b.do ?? []).flatMap((a) => [a.camera, a.show, a.send, a.tag, a.untag, a.set, a.highlight, a.strike, a.hide])].flat().filter((r) => r && r !== "all");
-  for (const r of refs) if (!ids.has(r)) problems.push(`walkthrough.beats[${i}] names ${r}, which isn't a node or frame`);
+  for (const a of [{ camera: b.camera }, ...(b.do ?? [])]) {
+    for (const key of ANY) for (const r of [a[key]].flat().filter((r) => r && r !== "all"))
+      if (!nodeIds.has(r) && !frameIds.has(r)) problems.push(`walkthrough.beats[${i}] ${key} names ${r}, which isn't a node or frame`);
+    for (const key of BOX) for (const r of [a[key]].flat().filter((r) => r != null))
+      if (!nodeIds.has(r)) problems.push(`walkthrough.beats[${i}] ${key} names ${r}, which isn't a node${frameIds.has(r) ? " (frames only work with camera, show, hide and strike)" : ""}`);
+  }
 });
 if (problems.length) {
   console.error(problems.join("\n"));

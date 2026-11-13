@@ -13,6 +13,14 @@ HYPERFRAMES="hyperframes@0.9.38"
 VENV="$HOME/.cache/pr-explain/kokoro-venv"
 export HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1
 
+# Check everything cheap before voicing, which can take minutes. build.mjs validates explain.json
+# (walkthrough.style included) and rewrites slides/, so the narration always matches the beats.
+case "${PR_EXPLAIN_STYLE:-draw}" in
+  draw|sans|serif|mono) ;;
+  *) echo "PR_EXPLAIN_STYLE is $PR_EXPLAIN_STYLE; use draw, sans, serif or mono" >&2; exit 1 ;;
+esac
+node "$HERE/build.mjs" "$OUT/explain.json"
+
 shopt -s nullglob
 texts=("$OUT"/slides/slide-*.txt)
 [ ${#texts[@]} -gt 0 ] || { echo "no narration in $OUT/slides; run build.mjs first" >&2; exit 1; }

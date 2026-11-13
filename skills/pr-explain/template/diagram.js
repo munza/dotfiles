@@ -1,5 +1,5 @@
 // diagramSVG(d): boxes and arrows laid out in ranks, left to right (or top down), as an SVG
-// string. Shared by the report and the video; build.mjs and video.mjs inline it.
+// string, for the report's How diagram; build.mjs inlines it into index.html.
 // d = { direction?: "right" | "down", nodes: [{ id, label, note?, tone? }], edges: [{ from, to, label?, note? }] }
 // Edges are steps, in order: a request travels each one in turn and lights up its target.
 // label sits on the line; note is the step's caption.

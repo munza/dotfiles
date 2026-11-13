@@ -14,11 +14,17 @@ const assets = path.join(out, "video", "assets");
 const durations = JSON.parse(fs.readFileSync(path.join(assets, "durations.json"), "utf8"));
 // Chatterbox (tts.py) writes no sentence timings: then actions run in order and there are no captions.
 const timings = fs.existsSync(path.join(assets, "timings.json")) ? JSON.parse(fs.readFileSync(path.join(assets, "timings.json"), "utf8")) : [];
+if (durations.length !== wt.beats.length) {
+  console.error(`explain.json has ${wt.beats.length} beats but ${durations.length} were voiced; run build.mjs, then render.sh again`);
+  process.exit(1);
+}
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const r1 = (n) => Math.round(n * 10) / 10;
 const r3 = (n) => Math.round(n * 1000) / 1000;
-const sid = (id) => String(id).replace(/[^a-zA-Z0-9_-]/g, "_");
+// A DOM-safe id, one-to-one: "_" becomes "__" and any other character outside [A-Za-z0-9-] becomes
+// _x<hex>_, so "api.v1" and "api_v1" stay apart.
+const sid = (id) => Array.from(String(id), (c) => (/[a-zA-Z0-9-]/.test(c) ? c : c === "_" ? "__" : `_x${c.codePointAt(0).toString(16)}_`)).join("");
 
 // tldraw's light palette: [stroke, fill]. Notes use the stronger sticky-note fill.
 const TONE = {
@@ -134,12 +140,14 @@ for (const n of wt.nodes) {
   Object.assign(g, { w, h, x: cx - w / 2, y: cy - h / 2 });
   nodes.set(n.id, g);
 }
-const frames = new Map((wt.frames ?? []).map((fr) => {
+// A frame with no boxes in it has no extent, so it's left out (build.mjs rejects one).
+const frames = new Map((wt.frames ?? []).flatMap((fr) => {
   const inside = [...nodes.values()].filter((n) => n.frame === fr.id);
+  if (!inside.length) { console.error(`warning: frame ${fr.id} has no boxes; leaving it out`); return []; }
   const pad = 56;
   const x = Math.min(...inside.map((n) => n.x)) - pad, y = Math.min(...inside.map((n) => n.y)) - pad;
   const w = Math.max(...inside.map((n) => n.x + n.w)) + pad - x, h = Math.max(...inside.map((n) => n.y + n.h)) + pad - y;
-  return [fr.id, { ...fr, x, y, w, h, members: inside.map((n) => n.id) }];
+  return [[fr.id, { ...fr, x, y, w, h, members: inside.map((n) => n.id) }]];
 }));
 const box = (id) => nodes.get(id) ?? frames.get(id);
 
@@ -282,7 +290,11 @@ const shownBy = [];
 {
   const s = new Set();
   for (const b of wt.beats) {
-    for (const a of b.do ?? []) { for (const id of [].concat(a.show ?? [])) s.add(id); if (a.send) a.send.forEach((id) => s.add(id)); }
+    for (const a of b.do ?? []) {
+      for (const id of [].concat(a.show ?? [])) s.add(id);
+      if (a.send) a.send.forEach((id) => s.add(id));
+      for (const id of [].concat(a.hide ?? [])) s.delete(id);
+    }
     shownBy.push(new Set(s));
   }
 }
@@ -328,7 +340,8 @@ function phraseTime(phrase, segs, speak) {
     const i = s.text.toLowerCase().indexOf(want);
     if (i >= 0) return speak + s.start + (i / Math.max(1, s.text.length)) * (s.end - s.start) - 0.15;
   }
-  console.error(`warning: "${phrase}" isn't in the narration; running it in order instead`);
+  // No timings at all (Chatterbox) means every `on` runs in order; that's expected, not worth a warning.
+  if (segs.length) console.error(`warning: "${phrase}" isn't in the narration; running it in order instead`);
   return null;
 }
 function camera(target, at, beat, first) {
@@ -345,7 +358,7 @@ wt.beats.forEach((b, i) => {
   let cursor = speak + 0.15;
   const highlighted = [];
   for (const a of b.do ?? []) {
-    const at = (a.on && phraseTime(a.on, segs, speak)) ?? cursor;
+    const at = (a.on ? phraseTime(a.on, segs, speak) : null) ?? cursor;
     let dur = 0;
     if (a.camera) { camera(a.camera, at, i, firstCamera); firstCamera = false; continue; }
     if (a.show) [].concat(a.show).forEach((id, k) => { if (frames.has(id)) showFrame(id, at + k * 0.2); else dur = Math.max(dur, k * 0.2 + showNode(id, at + k * 0.2)); });
@@ -378,7 +391,8 @@ wt.beats.forEach((b, i) => {
       else add(`tl.to("#n-${sid(to)}", { scale: 1.04, duration: 0.18, yoyo: true, repeat: 1, ease: "power1.inOut", transformOrigin: "50% 50%" }, ${r3(arrive - 0.05)});`);
       dur = arrive - at + 0.2;
     }
-    if (a.tag) {
+    if (a.tag && !nodes.has(a.tag)) console.error(`warning: tag ${a.tag}: no such box`);
+    else if (a.tag) {
       const g = nodes.get(a.tag), id = `t${tagN++}`;
       extras.push(pill(a.text ?? "", a.tone ?? "grey", "tag", id, placeTag(g, a.text ?? "")));
       if (tagOf[a.tag]) add(`tl.to("#${tagOf[a.tag]}", { opacity: 0, duration: 0.25 }, ${r3(at)});`);
@@ -407,7 +421,11 @@ wt.beats.forEach((b, i) => {
       add(`drawIn("#${id}", ${r3(at)}, 0.6);`);
       dur = 0.6;
     }
-    if (a.hide) for (const id of [].concat(a.hide)) add(`tl.to("#n-${sid(id)}, #f-${sid(id)}", { opacity: 0, duration: 0.4 }, ${r3(at)});`);
+    // Forget hidden boxes and frames, so a later show or send draws them in again.
+    if (a.hide) for (const id of [].concat(a.hide)) {
+      add(`tl.to("#n-${sid(id)}, #f-${sid(id)}", { opacity: 0, duration: 0.4 }, ${r3(at)});`);
+      shown.delete(id); framesShown.delete(id);
+    }
     if (!a.on) cursor = at + dur + 0.25;
     else cursor = Math.max(cursor, at + dur + 0.25);
   }
