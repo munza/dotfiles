@@ -2,6 +2,12 @@
 # keymap.json stay writable: changes made in Zed are kept, and only the keys
 # set here are re-applied on rebuild. Defaults turn telemetry off and set up
 # Nix editing (nixd, formatting with nixfmt).
+#
+# Zed itself comes from the Homebrew cask (prebuilt, updates itself), which the
+# Homebrew module adds when this is on: nixpkgs' zed-editor is often not in the
+# binary cache after an update, so a switch would compile it. With no Nix
+# wrapper, the tools Zed runs go on the shell's PATH. To use nixpkgs' build
+# instead, set programs.zed-editor.package = pkgs.zed-editor.
 { flake, ... }:
 flake.lib.mkModule {
   name = "zed";
@@ -13,6 +19,7 @@ flake.lib.mkModule {
     {
       programs.zed-editor = {
         enable = true;
+        package = null;
         userSettings.buffer_font_family = config.dotfiles.fonts.mono.name;
       };
       # nixpkgs names the CLI zeditor, since another program is called zed.
@@ -22,13 +29,12 @@ flake.lib.mkModule {
   defaults =
     { pkgs, ... }:
     {
+      home.packages = [
+        pkgs.nixd
+        pkgs.nixfmt
+      ];
       programs.zed-editor = {
         extensions = [ "nix" ];
-        # On Zed's PATH only, not your shell's.
-        extraPackages = [
-          pkgs.nixd
-          pkgs.nixfmt
-        ];
 
         userSettings = {
           telemetry = {

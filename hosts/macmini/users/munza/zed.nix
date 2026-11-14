@@ -1,7 +1,6 @@
 # Zed with vim mode and a space leader, on top of the module's defaults.
 {
   config,
-  lib,
   pkgs,
   ...
 }:
@@ -13,15 +12,8 @@ let
   };
 in
 {
-  # Zed comes from the Homebrew cask (prebuilt, updates itself), so there's no
-  # Nix wrapper to put tools on Zed's PATH: they go on the shell's PATH instead.
-  programs.zed-editor.package = null;
-  programs.zed-editor.extraPackages = lib.mkForce [ ];
-  home.packages = [
-    pkgs.nixd
-    pkgs.nixfmt
-    pkgs.stylua # For the Lua formatter below.
-  ];
+  # Zed is the Homebrew cask (see the module), so tools go on the shell's PATH.
+  home.packages = [ pkgs.stylua ]; # For the Lua formatter below.
 
   programs.zed-editor.userKeymaps = [
     {

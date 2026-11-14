@@ -110,7 +110,6 @@
       "tablepro"
       "tailscale-app"
       "vectorcraft"
-      "zed"
     ];
     # Everything installed is declared above, so rebuilds may remove the rest.
     onActivation = {

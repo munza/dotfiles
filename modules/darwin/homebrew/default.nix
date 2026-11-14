@@ -14,13 +14,17 @@ flake.lib.mkModule {
   imports = [ inputs.nix-homebrew.darwinModules.nix-homebrew ];
 
   glue =
-    { config, ... }:
+    { config, lib, ... }:
     {
       homebrew = {
         enable = true;
         # Puts brew and the apps it installs on PATH.
         enableZshIntegration = true;
         taps = [ "dotfiles/tap" ];
+        # The zed home module uses the cask unless a user picked a Nix package.
+        casks = lib.optional (lib.any (
+          home: home.dotfiles.zed.enable && home.programs.zed-editor.package == null
+        ) (lib.attrValues config.home-manager.users)) "zed";
       };
       # enableZshIntegration only covers interactive shells; login items
       # such as the arc menu run `zsh -lc` and need it too.
